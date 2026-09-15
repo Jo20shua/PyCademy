@@ -1724,6 +1724,550 @@ const HACKING_LESSONS = [
         explain: "Credential stuffing attacks specifically exploit reused passwords — a single breach can cascade into many compromised accounts."
       }
     ]
+  },
+  {
+    id: "hk-ai-cybersecurity",
+    levelId: "hk-lvl4",
+    title: "Role of AI in Enhancing Cybersecurity",
+    difficulty: "Medium",
+    minutes: 14,
+    prereq: ["hk-password-strength"],
+    concept: "Generative AI is a genuinely useful assistant for defensive security work — analyzing logs, explaining vulnerabilities, reviewing code — but it's a tool with real limitations, not an oracle.",
+    analogy: "Using an AI assistant for security analysis is like having a very well-read junior analyst: fast, tireless, and often right — but it can confidently state something wrong, and it's on you to verify before acting.",
+    whyItMatters: "AI-assisted workflows are now a normal part of real security work, but using them safely and skeptically is a skill in itself — not a replacement for understanding.",
+    explanation: [
+      "Legitimate defensive uses: summarizing and explaining log entries, drafting explanations of a CVE, reviewing code for common vulnerability patterns, brainstorming test cases, and speeding up documentation and report writing.",
+      "Hallucination is the core limitation: a language model can generate confident, fluent, plausible-sounding output that is simply wrong — including inventing CVE numbers, misdescribing a vulnerability, or suggesting a 'fix' that doesn't actually work.",
+      "Prompt injection is a security risk specific to AI systems: if an AI tool processes untrusted input (like a log file or a webpage) that contains hidden instructions, it may follow those instructions instead of the user's — an emerging area defenders need to understand.",
+      "Malicious AI tools (sometimes marketed under names implying no safety limits) exist specifically to lower the skill barrier for attacks — understanding that this category exists, and why it's dangerous, is different from learning to use one. This platform does not teach or provide access to such tools.",
+      "Responsible use means treating AI output as a draft or a starting hypothesis: verify facts, test suggested fixes, and never paste real secrets, credentials, or sensitive customer data into a third-party AI tool."
+    ],
+    syntax: "AI-assisted workflow: prompt -> draft analysis -> human verification -> action",
+    example: "# Illustrative prompt pattern for defensive log analysis:\n# \"Here is a sample of authentication log lines. Identify any patterns that\n#  look like repeated failed login attempts, and explain what you're seeing\n#  and why it might be suspicious. Do not assume malicious intent without\n#  clear evidence.\"",
+    commonMistakes: [
+      "Trusting an AI-generated security finding or fix without independently verifying it.",
+      "Pasting real credentials, API keys, or sensitive log data into a third-party AI tool.",
+      "Assuming that because a malicious AI tool exists, learning how it works means learning how to use it — this platform teaches the risk model, not operation."
+    ],
+    practice: {
+      prompt: "List three legitimate defensive cybersecurity tasks an AI assistant could reasonably help with, and one thing you should always double-check before trusting its output.",
+      starter: "# 1.\n# 2.\n# 3.\n# Always double-check:",
+      hint: "Think about log summarization, vulnerability explanation, and code review — and the risk of hallucinated details."
+    },
+    challenge: {
+      prompt: "Explain, in a few sentences, what prompt injection is and why it's a risk specific to AI systems that process untrusted input."
+    },
+    knowledgeCheck: [
+      {
+        q: "What is 'hallucination' in the context of AI-assisted security analysis?",
+        options: ["The AI refusing to answer", "The AI generating confident, plausible-sounding output that is factually wrong", "The AI running too slowly", "The AI encrypting its output"],
+        answer: 1,
+        explain: "Hallucination means the model states something with confidence that isn't actually true — which is why AI output always needs independent verification in security contexts."
+      }
+    ]
+  },
+  {
+    id: "hk-ai-prompts",
+    levelId: "hk-lvl5",
+    title: "Prompts for Network Security Analysis",
+    difficulty: "Medium",
+    minutes: 13,
+    prereq: ["hk-ai-cybersecurity"],
+    concept: "Well-structured prompts turn a general-purpose AI assistant into a useful defensive security analysis tool — the skill is in what you ask and what context you provide.",
+    analogy: "A vague prompt is like handing a new analyst a huge pile of logs with no instructions; a well-structured prompt is like giving them a clear assignment with the exact question you need answered.",
+    whyItMatters: "This is a practical, immediately usable skill — the difference between a generic, unhelpful AI response and a genuinely useful defensive analysis often comes down entirely to how the prompt is written.",
+    explanation: [
+      "A good defensive-analysis prompt usually includes: the data (logs, code, a message), the specific question, and any relevant constraints (e.g. 'don't assume malicious intent without clear evidence').",
+      "For threat identification: ask the model to identify patterns and explain its reasoning, not just give a verdict — 'explain why' surfaces useful detail and helps you catch a wrong conclusion.",
+      "For phishing detection: provide the suspicious message text and ask for specific indicators (urgency language, mismatched sender domain, suspicious links) rather than just 'is this phishing?'.",
+      "For secure code review: ask the model to check specific categories (input validation, injection risks, secrets handling) rather than a vague 'is this code secure?'.",
+      "Always keep a human decision in the loop — use the AI's output to inform your judgment, not replace it, especially for anything that leads to a real action (blocking an IP, disabling an account)."
+    ],
+    syntax: "prompt = data + specific question + constraints",
+    example: "# Example structured prompt (illustrative):\n# \"Here is an email's text and sender address. List specific phishing\n#  indicators you notice (sender mismatch, urgency, suspicious links),\n#  and rate your confidence. Do not assume phishing without evidence.\"",
+    commonMistakes: [
+      "Writing vague prompts ('is this bad?') that produce vague, low-value answers.",
+      "Not asking the model to explain its reasoning, making it harder to catch a wrong conclusion.",
+      "Skipping the human verification step for anything that leads to a real security action."
+    ],
+    practice: {
+      prompt: "Rewrite this vague prompt into a more specific, structured one: \"Is this log file suspicious?\" — include what data you'd provide and what specific question you'd ask.",
+      starter: "# Vague: \"Is this log file suspicious?\"\n# Rewritten:",
+      hint: "Specify what to look for (e.g. repeated failures from one IP) and ask the model to explain its reasoning."
+    },
+    challenge: {
+      prompt: "Write a structured prompt template (as a comment) for reviewing a piece of Python code for secure coding issues, covering at least 3 specific categories to check."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why is it better to ask an AI assistant to 'explain its reasoning' rather than just give a verdict?",
+        options: ["It makes the response longer for no reason", "It surfaces detail that helps you catch a wrong conclusion before acting on it", "It's required by every AI tool", "It has no real benefit"],
+        answer: 1,
+        explain: "Seeing the reasoning lets a human reviewer spot a flawed assumption or hallucinated detail before trusting the conclusion."
+      }
+    ]
+  },
+  {
+    id: "hk-phishing",
+    levelId: "hk-lvl8",
+    title: "What is Phishing?",
+    difficulty: "Medium",
+    minutes: 14,
+    prereq: ["hk-ai-prompts"],
+    concept: "Phishing tricks people into handing over credentials or sensitive information by impersonating a trusted sender or website.",
+    analogy: "It's a con artist wearing a convincing uniform — the message or page looks legitimate enough that the normal instinct to trust it kicks in before suspicion does.",
+    whyItMatters: "Phishing remains one of the most common ways real accounts get compromised, and recognizing it is a practical skill everyone needs, not just security specialists.",
+    explanation: [
+      "Common indicators: urgency language ('your account will be locked in 24 hours'), a sender address that doesn't quite match the claimed organization, generic greetings, and links whose actual destination (hover to check) doesn't match the displayed text.",
+      "A phishing kit, conceptually, is a pre-built fake login page designed to look identical to a real one, paired with a way to capture whatever is typed into it — this platform explains how they work and how to detect them, not how to build or deploy one.",
+      "Spear phishing targets a specific individual with personalized, researched details, making it harder to spot than generic mass phishing.",
+      "Detection tools look for: domain age/reputation, mismatches between the visible link text and the actual URL, and known phishing page fingerprints. Browsers and email providers use exactly these kinds of signals to warn users automatically.",
+      "The most effective personal defense is simple and boring: never enter credentials after clicking a link in an unsolicited message — navigate to the site directly instead."
+    ],
+    syntax: "Indicators: urgency + mismatched sender + suspicious link destination + generic greeting",
+    example: "# Illustrative — analyzing a suspicious message's structure, not sending one:\nmessage = {\n    \"sender\": \"support@paypa1-security.com\",  # note the '1' instead of 'l'\n    \"subject\": \"Urgent: Verify your account within 24 hours\",\n    \"link_text\": \"paypal.com/login\",\n    \"actual_link\": \"http://paypa1-secure-verify.net/login\",\n}",
+    commonMistakes: [
+      "Judging a message's legitimacy by how professional it looks — modern phishing pages can be visually identical to the real thing.",
+      "Trusting the displayed link text instead of checking the actual destination URL.",
+      "Assuming phishing only happens over email — it also happens via SMS (smishing), social media DMs, and phone calls (vishing)."
+    ],
+    practice: {
+      prompt: "Given the sample message dict in the example, write code that checks whether link_text and actual_link contain the same domain, printing a warning if they don't.",
+      starter: 'message = {\n    "link_text": "paypal.com/login",\n    "actual_link": "http://paypa1-secure-verify.net/login",\n}\n# your code here',
+      hint: "Extract the domain-looking substring from each and compare them — a simple 'in' check is enough for this exercise."
+    },
+    challenge: {
+      prompt: "List four specific indicators you'd look for when deciding whether an email is a phishing attempt, and explain why each one is a red flag."
+    },
+    knowledgeCheck: [
+      {
+        q: "What's the safest way to respond to an urgent email asking you to 'verify your account' via a link?",
+        options: ["Click the link immediately to avoid losing access", "Navigate to the site directly by typing its known address, rather than clicking the email's link", "Reply to the email asking if it's real", "Forward it to a friend to check"],
+        answer: 1,
+        explain: "Navigating directly avoids the core phishing mechanism entirely — the malicious page can't capture credentials you never enter into it."
+      }
+    ]
+  },
+  {
+    id: "hk-social-engineering",
+    levelId: "hk-lvl9",
+    title: "What is Social Engineering?",
+    difficulty: "Medium",
+    minutes: 13,
+    prereq: ["hk-phishing"],
+    concept: "Social engineering manipulates human psychology — trust, urgency, authority, fear — to get someone to do something they otherwise wouldn't, often bypassing technical security entirely.",
+    analogy: "No matter how strong a building's locks are, social engineering is convincing someone to just open the door for you by pretending to be the delivery driver.",
+    whyItMatters: "Even perfectly secure systems can be compromised through the humans using them — this is why security awareness training is as important as technical controls.",
+    explanation: [
+      "Common tactics: impersonating authority (a 'bank representative' or 'IT support'), creating false urgency, exploiting helpfulness, and pretexting (inventing a plausible false scenario to extract information).",
+      "In the specific context of payment fraud, this often looks like: a fake 'your card was charged, call this number to dispute it' message, or a fake payment page mimicking a real checkout flow.",
+      "Defenders analyze these attempts by looking for: unsolicited contact, requests for information a legitimate organization wouldn't ask for over that channel, and pressure to act immediately without verification.",
+      "The best individual defense is a simple habit: independently verify any unexpected request for sensitive information or money, using a contact method you already know is legitimate — not one provided by the person contacting you."
+    ],
+    syntax: "Social engineering red flags: unsolicited contact + urgency + request for sensitive info + pressure not to verify",
+    example: "# Illustrative — classifying a synthetic message, not real fraud data:\nmessage = \"Your card ending in 4321 was charged $499.99. If this wasn't you, call us immediately at [number in the message].\"\n# Red flag: verification number is provided BY the suspicious message itself,\n# not looked up independently.",
+    commonMistakes: [
+      "Verifying a suspicious claim using contact info provided by the suspicious message itself, rather than a source you already trust.",
+      "Assuming social engineering only targets 'less tech-savvy' people — well-crafted pretexts fool experienced people too.",
+      "Focusing security spending entirely on technical controls while ignoring security awareness training."
+    ],
+    practice: {
+      prompt: "Given a synthetic message claiming a suspicious charge with a callback number included in the message itself, explain in a comment why that's a red flag and what the safer verification step would be.",
+      starter: "# Red flag:\n# Safer verification step:",
+      hint: "The safe move is to call the number printed on your actual card or statement, not any number provided by the suspicious message."
+    },
+    challenge: {
+      prompt: "Describe a fictional (clearly synthetic) social engineering scenario and identify which specific psychological lever it's exploiting (authority, urgency, fear, or helpfulness)."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why is it risky to verify a suspicious claim using contact information provided within the suspicious message itself?",
+        options: ["It's not risky at all", "The attacker controls that contact info too, so 'verifying' that way just confirms with the attacker", "It takes too long", "Phone numbers can't be faked"],
+        answer: 1,
+        explain: "If the attacker supplied the 'verification' contact info, calling it just reaches the attacker again, not a real independent check."
+      }
+    ]
+  },
+  {
+    id: "hk-keylogger",
+    levelId: "hk-lvl10",
+    title: "What is Keylogger?",
+    difficulty: "Medium",
+    minutes: 13,
+    prereq: ["hk-social-engineering"],
+    concept: "A keylogger records keystrokes, capturing anything typed — including passwords — without the user's knowledge.",
+    analogy: "It's the digital equivalent of someone secretly watching over your shoulder and writing down everything you type, every time, on every app.",
+    whyItMatters: "Understanding how keyloggers operate and how they're detected is essential endpoint-security knowledge — the goal here is recognition and defense, not building one.",
+    explanation: [
+      "Keyloggers can be software (running as a background process) or hardware (a physical device between keyboard and computer) — software keyloggers are far more common today.",
+      "They're dangerous because they capture everything: passwords, messages, financial details — regardless of how strong those passwords are, since the keylogger sees them before any encryption happens.",
+      "Defensive detection signs: unexpected background processes, unusual outbound network connections (keyloggers need to send captured data somewhere), and endpoint security software flagging suspicious behavior patterns.",
+      "Persistence, at a high level, refers to malware's techniques for surviving a reboot (e.g. registering itself to auto-start) — understanding that this concept exists is part of the threat model, without needing implementation details.",
+      "Practical defenses: reputable endpoint security software, keeping systems patched, using a password manager with browser autofill (which some, not all, keyloggers can't capture as easily as manual typing), and multi-factor authentication, which limits the damage even if a password is captured."
+    ],
+    syntax: "Threat model: keystroke capture -> local storage/exfiltration -> attacker retrieval",
+    example: "# Illustrative — analyzing SYNTHETIC process data for suspicious signs,\n# not building monitoring software:\nprocesses = [\n    {\"name\": \"chrome.exe\", \"network_connections\": 3},\n    {\"name\": \"svch0st.exe\", \"network_connections\": 12},  # note the zero instead of 'o'\n]\nfor p in processes:\n    if p[\"network_connections\"] > 10:\n        print(f\"Review: {p['name']} has unusually high network activity\")",
+    commonMistakes: [
+      "Assuming antivirus alone guarantees protection — defense in depth (MFA, patching, awareness) matters too.",
+      "Overlooking hardware keyloggers on shared/public computers, which software security tools can't detect.",
+      "Confusing a keylogger (captures input) with other malware categories (like ransomware, which encrypts data) — different threat models need different defenses."
+    ],
+    practice: {
+      prompt: "Given the sample processes list in the example, write code that flags any process whose name looks like it's impersonating a known system process (hint: check for suspicious character substitutions) OR has unusually high network_connections.",
+      starter: 'processes = [\n    {"name": "chrome.exe", "network_connections": 3},\n    {"name": "svch0st.exe", "network_connections": 12},\n]\n# your code here',
+      hint: "You can flag on network_connections > some threshold as a simple heuristic for this exercise."
+    },
+    challenge: {
+      prompt: "Explain, in a few sentences, why multi-factor authentication limits the damage of a keylogger even if it successfully captures a password."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why can't strong password complexity alone protect against a keylogger?",
+        options: ["Keyloggers only capture weak passwords", "A keylogger captures whatever is typed, including a strong password, before any encryption happens", "Keyloggers don't actually work", "Strong passwords are typed differently"],
+        answer: 1,
+        explain: "A keylogger sees raw keystrokes as they're typed — password strength doesn't matter if the password itself is captured directly."
+      }
+    ]
+  },
+  {
+    id: "hk-wifi-wep",
+    levelId: "hk-lvl11",
+    title: "Wifi Encryptions",
+    difficulty: "Hard",
+    minutes: 15,
+    prereq: ["hk-keylogger"],
+    concept: "Wi-Fi encryption protocols have evolved because early standards had fundamental cryptographic weaknesses — understanding why WEP failed explains why modern standards look the way they do.",
+    analogy: "WEP is like a lock that was designed with a predictable pattern — once enough people studied that pattern, picking it became fast and reliable, no matter how carefully you installed it.",
+    whyItMatters: "This is a classic, well-documented case study in why key management and protocol design matter as much as key length — a lesson that generalizes far beyond Wi-Fi.",
+    explanation: [
+      "WEP (Wired Equivalent Privacy) used a small, reused initialization vector alongside a static key, which created statistically predictable patterns in the encrypted traffic — given enough captured packets, the key becomes mathematically recoverable.",
+      "This is a protocol design flaw, not a matter of the password being 'weak' — even a long, complex WEP key doesn't fix the underlying issue, which is why WEP was fully deprecated industry-wide rather than patched.",
+      "WPA and WPA2 replaced WEP's flawed key scheduling with much stronger cryptography (and WPA2 added AES encryption), which is why any network still using WEP today should be treated as effectively unprotected.",
+      "Monitor mode (a wireless adapter mode that captures all nearby traffic rather than just traffic addressed to it) and packet capture are the underlying techniques security researchers use to study wireless traffic in authorized lab settings — this platform teaches the concept, not operational attack steps against real networks.",
+      "Defensively: this whole lesson is really an argument for why using WPA2/WPA3 (never WEP) and strong, unique Wi-Fi passphrases matters — the protocol-level fix already happened; the remaining risk is misconfiguration."
+    ],
+    syntax: "WEP: static key + small reused IV -> statistically recoverable\nWPA2: much larger key space + AES -> not practically breakable this way",
+    example: "# Conceptual only — not a cracking tool:\n# WEP's vulnerability comes from IV reuse creating detectable patterns\n# across many packets, not from any single packet being weak.",
+    commonMistakes: [
+      "Assuming a 'strong' WEP password would have been secure — the flaw was in the protocol itself, not password strength.",
+      "Believing any encrypted Wi-Fi network is equally safe, regardless of which protocol it uses.",
+      "Confusing 'monitor mode' (a passive traffic-capture capability used in authorized research) with actively attacking a network."
+    ],
+    practice: {
+      prompt: "In your own words, explain why WEP's weakness is a protocol design flaw rather than something a longer password could fix.",
+      starter: "# Your explanation here",
+      hint: "The flaw is in how the initialization vector and key are used together across packets, not in the key's length or complexity."
+    },
+    challenge: {
+      prompt: "Explain what changed between WEP and WPA2 that addressed WEP's fundamental cryptographic weakness."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why was WEP deprecated industry-wide instead of being fixed with longer keys?",
+        options: ["Longer keys were too slow to compute", "The vulnerability was in the protocol's key-scheduling design, not key length, so longer keys didn't fix it", "WEP was never actually vulnerable", "It was replaced for marketing reasons only"],
+        answer: 1,
+        explain: "WEP's flaw came from predictable patterns in how it combined a reused initialization vector with the key — a structural issue no amount of key length could fix."
+      }
+    ]
+  },
+  {
+    id: "hk-wifi-wpa",
+    levelId: "hk-lvl12",
+    title: "Revisiting WPA-WPA2",
+    difficulty: "Hard",
+    minutes: 15,
+    prereq: ["hk-wifi-wep"],
+    concept: "WPA/WPA2 fixed WEP's core cryptographic flaws, but real-world weaknesses still exist — mostly around weak passphrases and the WPS convenience feature, not the core protocol.",
+    analogy: "WPA2 is a genuinely strong lock — but if the 'key' (your passphrase) is short and guessable, or there's a poorly designed spare-key feature (WPS) bolted onto the door, the lock's strength doesn't matter.",
+    whyItMatters: "This distinction — strong protocol, weak configuration — is one of the most common patterns in real-world security failures across many technologies, not just Wi-Fi.",
+    explanation: [
+      "The 4-way handshake is the process where a device proves it knows the network passphrase without transmitting the passphrase itself — captured handshake data can, in principle, be tested against password guesses offline, which is exactly why passphrase strength matters so much.",
+      "WPS (Wi-Fi Protected Setup) was designed for convenience (push a button to connect) but its PIN-based implementation had a design flaw that made the PIN crackable in a reasonable number of attempts on many routers — the fix, in most modern routers, is disabling WPS entirely.",
+      "A wordlist attack against a captured handshake only works if the passphrase is guessable — this is precisely why a long, random, non-dictionary Wi-Fi passphrase (not a short 'clever' one) is the actual defense.",
+      "This platform does not provide operational cracking instructions — the security lesson here is entirely about why passphrase strength and disabling WPS matter, which is directly actionable for securing your own network.",
+      "Defensive checklist: disable WPS, use WPA2 or WPA3, use a long random passphrase (think length over complexity, same principle as account passwords), and keep router firmware updated."
+    ],
+    syntax: "Passphrase strength defends against handshake-based offline guessing;\nWPS should be disabled entirely on any router you control.",
+    example: "# Illustrative — estimating passphrase strength, not cracking anything:\nimport string\n\ndef passphrase_strength_estimate(passphrase):\n    return len(passphrase) >= 16 and not passphrase.isalpha()",
+    commonMistakes: [
+      "Leaving WPS enabled on a home router 'for convenience' without realizing it's a known weak point.",
+      "Choosing a short, memorable Wi-Fi passphrase, not realizing it's exactly what makes offline guessing against a captured handshake feasible.",
+      "Assuming WPA2 alone guarantees security regardless of passphrase choice or WPS configuration."
+    ],
+    practice: {
+      prompt: "Write a function that checks whether a Wi-Fi passphrase is at least 16 characters long — a simple, practical strength heuristic based on this lesson.",
+      starter: "def is_strong_wifi_passphrase(passphrase):\n    # your code here\n    pass\n\nprint(is_strong_wifi_passphrase(\"correcthorsebatterystaple123\"))",
+      hint: "len(passphrase) >= 16 is the core check for this exercise."
+    },
+    challenge: {
+      prompt: "Explain why disabling WPS is recommended even though WPA2 itself is cryptographically strong."
+    },
+    knowledgeCheck: [
+      {
+        q: "What is the main real-world weakness in most WPA2 network compromises — the protocol itself, or something else?",
+        options: ["The WPA2 protocol's core cryptography is fundamentally broken", "Usually weak/guessable passphrases or the WPS feature, not the core WPA2 protocol", "WPA2 doesn't actually encrypt anything", "There is no real weakness at all"],
+        answer: 1,
+        explain: "WPA2's core cryptography is strong — real-world compromises typically exploit weak passphrases or the separate, poorly designed WPS convenience feature."
+      }
+    ]
+  },
+  {
+    id: "hk-https-defense",
+    levelId: "hk-lvl13",
+    title: "Understanding HTTPS and How to tackle",
+    difficulty: "Hard",
+    minutes: 14,
+    prereq: ["hk-mitm", "hk-wifi-wpa"],
+    concept: "HTTPS (HTTP over TLS) is the primary real-world defense against network-level eavesdropping and MITM attacks — understanding exactly what it guarantees (and what it doesn't) is essential.",
+    analogy: "A valid TLS certificate is like a notarized ID check before a conversation starts — both sides confirm who they're really talking to before anything sensitive is said, and the whole conversation is then sealed.",
+    whyItMatters: "Building on the MITM concepts from the previous lesson, this is the concrete mechanism that defeats most network-level interception attempts in practice.",
+    explanation: [
+      "TLS provides three guarantees: encryption (contents are unreadable in transit), integrity (tampering is detectable), and authentication (via certificates, you can verify you're really talking to the claimed server).",
+      "A certificate is issued by a Certificate Authority (CA) that vouches for the domain's ownership; your browser maintains a list of trusted CAs and rejects certificates it can't validate against that trust chain.",
+      "'Bypassing HTTPS' in a MITM context generally doesn't mean breaking the cryptography — it means tricking the user into accepting an invalid certificate, or exploiting a site that doesn't properly enforce HTTPS everywhere (e.g. an HTTP page that later redirects to a sensitive HTTPS form).",
+      "HSTS (HTTP Strict Transport Security) is a defensive header a site can send telling browsers 'never connect to me over plain HTTP again, even if a link says to' — this closes one specific downgrade weakness.",
+      "The practical takeaway for anyone browsing: never dismiss a certificate warning, and look for HTTPS specifically on any page requesting sensitive information — not just somewhere on the site."
+    ],
+    syntax: "Certificate validation: domain match + valid signature chain + not expired + not revoked",
+    example: "# Conceptual — checking a URL uses HTTPS before treating it as safe to submit data to:\ndef looks_safe_to_submit(url):\n    return url.startswith(\"https://\")\n\nprint(looks_safe_to_submit(\"http://example.com/login\"))   # False — red flag",
+    commonMistakes: [
+      "Dismissing a browser certificate warning to 'just get to the site' — this is exactly the scenario TLS validation exists to prevent.",
+      "Assuming a site is safe because most of it uses HTTPS, without checking the specific page handling sensitive data.",
+      "Confusing 'HTTPS present' with 'the site is trustworthy' — HTTPS proves you're talking to the claimed domain, not that the domain itself is legitimate."
+    ],
+    practice: {
+      prompt: "Write a function looks_safe_to_submit(url) that returns True only if the URL starts with 'https://', and test it against both an http:// and an https:// URL.",
+      starter: 'def looks_safe_to_submit(url):\n    # your code here\n    pass\n\nprint(looks_safe_to_submit("https://example.com/login"))\nprint(looks_safe_to_submit("http://example.com/login"))',
+      hint: "url.startswith(\"https://\") is the core check."
+    },
+    challenge: {
+      prompt: "Explain what HSTS defends against, and why a site sending that header is meaningfully safer than one that doesn't."
+    },
+    knowledgeCheck: [
+      {
+        q: "What does a valid TLS certificate primarily prove to your browser?",
+        options: ["That the website has no bugs", "That you are actually connected to the domain the certificate claims, verified by a trusted authority", "That the website is not a scam", "That the connection is faster"],
+        answer: 1,
+        explain: "Certificate validation confirms identity (you're talking to the real domain) — it doesn't vouch for whether that domain's content is trustworthy."
+      }
+    ]
+  },
+  {
+    id: "hk-android",
+    levelId: "hk-lvl15",
+    title: "What is Android?",
+    difficulty: "Medium",
+    minutes: 13,
+    prereq: ["hk-https-defense"],
+    concept: "Android's security model is built around app sandboxing and a permissions system — understanding both explains most mobile security risks and defenses.",
+    analogy: "Each Android app runs in its own sealed box by default; permissions are the specific, revocable keys you hand an app to reach outside that box — into your contacts, camera, or location.",
+    whyItMatters: "Mobile devices carry enormous amounts of personal data, and most real mobile security incidents come from misunderstanding or overgranting permissions, not from exotic exploits.",
+    explanation: [
+      "Each app runs sandboxed with its own user ID and restricted access by default; it must explicitly request permissions to access sensitive resources (camera, contacts, location, SMS).",
+      "A malicious app typically works by requesting excessive, unrelated permissions (a flashlight app asking for SMS access is a classic red flag) or by disguising itself as a legitimate app (a fake banking app, for example).",
+      "APKs (Android's app package format) installed from outside the official app store ('sideloading') skip much of the store's vetting process, which is why it significantly increases risk.",
+      "Metasploit, conceptually, is a widely used penetration-testing framework that includes modules for testing device/application vulnerabilities in authorized assessments — this platform teaches that it exists and what its role is in professional security testing, not how to use it against a real device.",
+      "Defensive practices: install only from official stores, review requested permissions against what the app actually needs, keep the OS and apps updated, and use device encryption and a lock screen."
+    ],
+    syntax: "App sandbox + explicit permission grants = Android's core security model",
+    example: '# Illustrative — flagging apps that request excessive permissions for their category:\napps = [\n    {"name": "Flashlight Pro", "permissions": ["CAMERA", "SMS", "CONTACTS", "LOCATION"]},\n    {"name": "Notes App", "permissions": ["STORAGE"]},\n]\nfor app in apps:\n    if "Flashlight" in app["name"] and "SMS" in app["permissions"]:\n        print(f"Review: {app[\'name\']} requests unrelated permission SMS")',
+    commonMistakes: [
+      "Granting every permission an app requests without checking whether it's relevant to the app's actual function.",
+      "Sideloading apps from untrusted sources to bypass store restrictions.",
+      "Assuming mobile devices are inherently safer than computers — they carry similar, sometimes greater, risk given how much personal data they hold."
+    ],
+    practice: {
+      prompt: "Given the sample apps list in the example, write code that flags any app requesting a permission that seems unrelated to its apparent function (you decide the logic — e.g., a 'Notes' app requesting CAMERA).",
+      starter: 'apps = [\n    {"name": "Flashlight Pro", "permissions": ["CAMERA", "SMS", "CONTACTS", "LOCATION"]},\n    {"name": "Notes App", "permissions": ["STORAGE"]},\n]\n# your code here',
+      hint: "A simple heuristic like checking if 'SMS' or 'CONTACTS' appears in a non-messaging app's permission list works for this exercise."
+    },
+    challenge: {
+      prompt: "Explain why sideloading an app from outside the official app store increases risk, even if the app looks identical to a legitimate one."
+    },
+    knowledgeCheck: [
+      {
+        q: "What is the core purpose of Android's app sandboxing model?",
+        options: ["To make apps run faster", "To isolate each app so it can't access sensitive resources without an explicit permission grant", "To prevent apps from being uninstalled", "To encrypt all network traffic automatically"],
+        answer: 1,
+        explain: "Sandboxing limits what an app can reach by default, with permissions acting as deliberate, revocable exceptions to that isolation."
+      }
+    ]
+  },
+  {
+    id: "hk-dos",
+    levelId: "hk-lvl16",
+    title: "What is DoS?",
+    difficulty: "Medium",
+    minutes: 14,
+    prereq: ["hk-android"],
+    concept: "A Denial-of-Service attack aims to make a system unavailable to legitimate users — a direct attack on the 'Availability' leg of the CIA triad.",
+    analogy: "It's like flooding a shop's entrance with people who have no intention of buying anything, just to make it impossible for real customers to get in.",
+    whyItMatters: "Availability is just as much a security property as confidentiality — a service that's down provides zero value regardless of how well its data is protected.",
+    explanation: [
+      "Network-layer attacks try to exhaust bandwidth or connection capacity with sheer traffic volume; application-layer attacks target a specific expensive operation (like a slow database query) to exhaust server resources with comparatively little traffic.",
+      "A DDoS (Distributed Denial-of-Service) attack sources that traffic from many different locations at once, making it much harder to block by simply denying a single IP address.",
+      "Defensive layers: rate limiting (capping how many requests a single source can make), a Content Delivery Network/Web Application Firewall (absorbing and filtering traffic before it reaches your origin server), load balancing (spreading legitimate load across multiple servers), and traffic monitoring to detect abnormal patterns early.",
+      "This platform does not provide DoS/DDoS tooling or instructions for taking down a real service — the useful, actionable skill here is recognizing abnormal traffic patterns and knowing which mitigations address which attack type."
+    ],
+    syntax: "availability threat model: legitimate capacity < attack traffic volume/cost = service degraded or down",
+    example: "# Illustrative — analyzing SYNTHETIC request-rate data to flag abnormal traffic:\nrequests_per_minute_by_ip = {\"203.0.113.5\": 4200, \"192.168.1.10\": 12}\nfor ip, count in requests_per_minute_by_ip.items():\n    if count > 1000:\n        print(f\"Review: {ip} sent {count} requests/min — abnormal volume\")",
+    commonMistakes: [
+      "Assuming DoS is always about raw bandwidth — application-layer attacks can succeed with comparatively little traffic by targeting expensive operations.",
+      "Relying on blocking a single IP as a full defense against a distributed (multi-source) attack.",
+      "Treating availability as a lesser concern than confidentiality — an inaccessible service has failed its users regardless of how well its data is otherwise protected."
+    ],
+    practice: {
+      prompt: "Given the sample requests_per_minute_by_ip dict in the example, write code that lists every IP exceeding a 1000 requests/minute threshold, sorted by request count descending.",
+      starter: 'requests_per_minute_by_ip = {"203.0.113.5": 4200, "192.168.1.10": 12, "198.51.100.9": 1500}\n# your code here',
+      hint: "Filter the dict items by value, then use sorted() with key=lambda pair: pair[1], reverse=True."
+    },
+    challenge: {
+      prompt: "Explain the difference between a network-layer and an application-layer DoS attack, and name one defensive measure specifically suited to each."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why is a DDoS attack harder to defend against than a DoS attack from a single source?",
+        options: ["DDoS attacks are actually weaker", "Traffic comes from many different sources, making simple single-IP blocking ineffective", "DDoS only targets small websites", "There's no real difference"],
+        answer: 1,
+        explain: "Distributing the attack across many sources defeats the simplest defense (blocking one IP), requiring broader mitigations like rate limiting and traffic-pattern analysis instead."
+      }
+    ]
+  },
+  {
+    id: "hk-wordpress",
+    levelId: "hk-lvl20",
+    title: "What is WordPress?",
+    difficulty: "Medium",
+    minutes: 13,
+    prereq: ["hk-dos"],
+    concept: "WordPress powers a huge share of the web, and its plugin/theme ecosystem is both its greatest strength and its most common source of security vulnerabilities.",
+    analogy: "WordPress core is like a well-built house; plugins and themes are third-party renovations — the house's security is only as strong as the weakest renovation installed.",
+    whyItMatters: "Because WordPress is so widely used, vulnerability scanning and hardening it is a genuinely common, practical security task — not a niche skill.",
+    explanation: [
+      "Most real-world WordPress compromises come from outdated or poorly coded plugins/themes, not from WordPress core itself, which is generally well-maintained.",
+      "A vulnerability scanner like WPScan (used defensively, with authorization) checks a site's WordPress version, installed plugins/themes, and known configuration weaknesses against a database of known vulnerabilities — the same defensive workflow taught in the Vulnerability Scanning lesson.",
+      "Common weak configurations: default admin usernames, weak passwords, exposed debug information, outdated software versions, and overly permissive file permissions.",
+      "Hardening steps: keep WordPress core, themes, and plugins updated, remove unused plugins/themes entirely (not just deactivate), use strong unique credentials, and limit login attempts.",
+      "Any scanning exercise in this course targets localhost or a deliberately vulnerable lab installation — never a live WordPress site without explicit authorization."
+    ],
+    syntax: "Scan workflow: identify version/plugins -> match against known vulnerabilities -> prioritize by severity -> remediate",
+    example: "# Illustrative — checking SYNTHETIC plugin version data against a known-vulnerable list:\ninstalled_plugins = {\"contact-form-pro\": \"2.1.0\", \"seo-booster\": \"4.5.2\"}\nknown_vulnerable = {\"contact-form-pro\": \"2.1.0\"}\nfor name, version in installed_plugins.items():\n    if known_vulnerable.get(name) == version:\n        print(f\"Review: {name} v{version} matches a known vulnerable version\")",
+    commonMistakes: [
+      "Deactivating a vulnerable plugin instead of fully removing it — deactivated plugin files can sometimes still be reached directly.",
+      "Assuming WordPress core vulnerabilities are the main risk, when plugins/themes are the far more common source.",
+      "Running any scanning tool against a live site without explicit written authorization."
+    ],
+    practice: {
+      prompt: "Using the sample installed_plugins and known_vulnerable dicts, write code that prints every plugin whose installed version matches a known-vulnerable version.",
+      starter: 'installed_plugins = {"contact-form-pro": "2.1.0", "seo-booster": "4.5.2"}\nknown_vulnerable = {"contact-form-pro": "2.1.0"}\n# your code here',
+      hint: "Loop through installed_plugins and compare each version against known_vulnerable.get(name)."
+    },
+    challenge: {
+      prompt: "Explain why removing an unused plugin entirely is safer than simply deactivating it."
+    },
+    knowledgeCheck: [
+      {
+        q: "What is the most common source of real-world WordPress security compromises?",
+        options: ["WordPress core itself", "Outdated or poorly coded plugins/themes", "The hosting provider always", "There is no common pattern"],
+        answer: 1,
+        explain: "WordPress core is generally well-maintained; the plugin/theme ecosystem is where most real vulnerabilities are found in practice."
+      }
+    ]
+  },
+  {
+    id: "hk-vuln-reporting",
+    levelId: "hk-lvl21",
+    title: "Generating Reports",
+    difficulty: "Hard",
+    minutes: 16,
+    prereq: ["hk-wordpress"],
+    concept: "A vulnerability assessment is only as useful as its report — clearly communicating severity, impact, and remediation is what turns a scan into actual security improvement.",
+    analogy: "Raw scanner output is like a doctor's lab results printout; a good report is the doctor's actual diagnosis and treatment plan — the data alone doesn't help anyone act.",
+    whyItMatters: "Professional security work is judged heavily on communication — a brilliant finding that's poorly reported often gets ignored, while a clear one gets fixed.",
+    explanation: [
+      "A vulnerability scanner produces findings, each typically tied to a CVE (a unique public vulnerability identifier) and a CVSS score (0.0–10.0, indicating severity) — but raw findings need triage before they're useful.",
+      "False positives are common in automated scanning — a good report distinguishes verified findings from ones that need manual confirmation, to avoid wasting remediation effort.",
+      "A solid finding write-up includes: what was found, where (affected component/URL), how severe (with justification, not just the raw score), how to reproduce it safely, and a specific, actionable remediation step — not just 'fix this'.",
+      "Reports for different audiences differ: an executive summary focuses on business risk and priority in plain language; the technical findings section gives engineers exactly what they need to reproduce and fix each issue.",
+      "Retesting after remediation is a standard, often-skipped step — a finding isn't actually closed until it's been verified fixed."
+    ],
+    syntax: "Finding = what + where + severity (CVSS) + reproduction steps + remediation",
+    example: '# Illustrative — turning a SYNTHETIC finding into a structured report entry:\nfinding = {\n    "title": "Outdated plugin with known SQL injection",\n    "component": "contact-form-pro v2.1.0",\n    "cvss": 8.6,\n    "remediation": "Update to v2.3.1 or later, which patches this issue.",\n}\nprint(f"[{finding[\'cvss\']}] {finding[\'title\']} — {finding[\'component\']}")\nprint(f"Fix: {finding[\'remediation\']}")',
+    commonMistakes: [
+      "Reporting a raw scanner finding without triage, burying real, actionable issues among false positives.",
+      "Writing a remediation recommendation too vague to act on ('improve security') instead of a specific step.",
+      "Skipping retesting after a fix is applied, leaving the finding's actual status unverified."
+    ],
+    practice: {
+      prompt: "Given the sample finding dict in the example, write a function format_finding(finding) that returns a one-line formatted summary string combining severity, title, and component.",
+      starter: 'finding = {\n    "title": "Outdated plugin with known SQL injection",\n    "component": "contact-form-pro v2.1.0",\n    "cvss": 8.6,\n}\n\ndef format_finding(finding):\n    # your code here\n    pass\n\nprint(format_finding(finding))',
+      hint: "An f-string combining finding['cvss'], finding['title'], and finding['component'] is all you need."
+    },
+    challenge: {
+      prompt: "Write a short, professional finding write-up (a few sentences) for a fictional, clearly synthetic vulnerability, including severity reasoning and a specific remediation step."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why does a good vulnerability report distinguish verified findings from potential false positives?",
+        options: ["It doesn't matter either way", "Treating unverified findings as confirmed wastes remediation effort and erodes trust in the report", "False positives should never be mentioned", "Scanners never produce false positives"],
+        answer: 1,
+        explain: "Confirming findings before reporting them as issues keeps the report credible and focuses remediation effort where it's actually needed."
+      }
+    ]
+  },
+  {
+    id: "hk-interview-prep",
+    levelId: "hk-lvl22",
+    title: "General Hacking Based",
+    difficulty: "Hard",
+    minutes: 18,
+    prereq: ["hk-vuln-reporting"],
+    concept: "Security interviews test whether you understand the reasoning behind concepts — what's happening, why, how it's detected, and how it's prevented — not just definitions.",
+    analogy: "A good interview answer is less like reciting a dictionary definition and more like explaining a case to a colleague: the mechanism, the risk, and the fix, in your own words.",
+    whyItMatters: "This is a direct capstone on everything covered across the Ethical Hacking track — consolidating it into interview-ready explanations is genuinely useful, whether or not you're interviewing soon.",
+    explanation: [
+      "General/conceptual questions often probe the CIA triad, the difference between authentication and authorization, and vulnerability vs. risk — foundational vocabulary covered early in this track.",
+      "Vulnerability assessment and penetration testing questions probe methodology: recon, scanning, identifying findings, reporting, and the ethical/legal boundary of authorization.",
+      "Networking questions commonly cover TCP vs UDP, the purpose of common ports, and how MITM/ARP poisoning work conceptually.",
+      "Social engineering questions probe recognizing manipulation tactics and explaining why technical controls alone aren't sufficient.",
+      "Web security questions commonly focus on SQL injection and XSS: what they are, why they happen, and the structural fix for each — not just the vulnerability name.",
+      "A strong general strategy for any scenario question: name the concept, explain the mechanism briefly, then always close with detection and remediation — interviewers are listening for that last part specifically."
+    ],
+    syntax: "Answer structure: concept -> mechanism -> detection -> remediation",
+    example: "# Example strong answer structure for \"What is SQL injection?\":\n# 1. Concept: untrusted input treated as executable query code instead of data\n# 2. Mechanism: string concatenation lets input alter the query's structure\n# 3. Detection: code review for string-built queries; automated scanning\n# 4. Remediation: parameterized queries / prepared statements",
+    commonMistakes: [
+      "Giving a one-line dictionary definition without explaining the mechanism or the fix.",
+      "Mixing up related concepts (e.g. authentication vs authorization, encoding vs encryption) under interview pressure.",
+      "Forgetting to mention detection and remediation, which is often exactly what the interviewer is listening for."
+    ],
+    practice: {
+      prompt: "Using the four-part structure (concept -> mechanism -> detection -> remediation), write a strong interview answer for the question: 'What is Cross-Site Scripting?'",
+      starter: "# Concept:\n# Mechanism:\n# Detection:\n# Remediation:",
+      hint: "Reuse what you learned in the XSS lesson: untrusted input rendered as executable HTML/JS, fixed by output encoding and CSP."
+    },
+    challenge: {
+      prompt: "Write a strong interview-style answer to the scenario question: 'A colleague asks why a strong Wi-Fi password isn't enough if WPS is still enabled on the router. What do you tell them?'"
+    },
+    knowledgeCheck: [
+      {
+        q: "In a security interview, what's typically most valuable to include beyond a correct definition?",
+        options: ["Nothing else is needed", "An explanation of the mechanism plus how it's detected and remediated", "The exact CVE number of a related vulnerability", "A joke to lighten the mood"],
+        answer: 1,
+        explain: "Interviewers are usually testing depth of understanding — mechanism, detection, and remediation demonstrate that far better than a definition alone."
+      },
+      {
+        q: "What's the key difference between a vulnerability assessment and authorized penetration testing?",
+        options: ["They are exactly the same thing", "A vulnerability assessment identifies and catalogs weaknesses; penetration testing goes further to safely demonstrate exploitability within an authorized scope", "Penetration testing never requires authorization", "Vulnerability assessments are illegal"],
+        answer: 1,
+        explain: "Assessment focuses on finding and cataloging issues; authorized pentesting validates real-world exploitability, both strictly within a defined, authorized scope."
+      },
+      {
+        q: "Why do interviewers often ask about the difference between encoding, encryption, and hashing?",
+        options: ["It's trivia with no practical purpose", "Confusing them is a common real mistake that leads to actual security failures (e.g. using encoding for confidentiality)", "They're actually identical concepts", "Only hashing is ever asked about"],
+        answer: 1,
+        explain: "This confusion shows up in real vulnerabilities — like assuming Base64 encoding provides confidentiality, which it doesn't."
+      }
+    ]
   }
 ];
 
@@ -2352,6 +2896,154 @@ const EXERCISES = [
     concept: "hk-password-strength",
     variantOf: null,
     xp: 15
+  },
+  {
+    id: "ex-hk-ai-mc",
+    topicId: "hk-ai-cybersecurity",
+    title: "AI Output: Trust but Verify",
+    difficulty: "Medium",
+    type: "multiple_choice",
+    problem: "An AI assistant confidently states a specific CVE number as the cause of a bug in your code. What should you do before acting on it?",
+    options: ["Trust it immediately since AI tools are always accurate", "Independently verify the CVE actually exists and applies before acting", "Ignore all AI output permanently", "Ask the same AI tool to confirm itself"],
+    correctIndex: 1,
+    hint: "Hallucination means an AI can state something specific and wrong with full confidence — independent verification is the safeguard.",
+    xp: 10
+  },
+  {
+    id: "ex-hk-prompt-1",
+    topicId: "hk-ai-prompts",
+    title: "Rewrite a Weak Prompt",
+    difficulty: "Medium",
+    type: "short_answer",
+    problem: "Rewrite the vague prompt 'is this code secure?' into a structured prompt that specifies what to check and asks for reasoning. Write your improved prompt.",
+    acceptableAnswers: ["input validation", "injection", "secrets", "explain", "reasoning", "specific"],
+    hint: "Name specific categories to check (input validation, injection risks, secrets handling) and ask the model to explain its reasoning.",
+    xp: 15
+  },
+  {
+    id: "ex-hk-phishing-1",
+    topicId: "hk-phishing",
+    title: "Detect the Domain Mismatch",
+    difficulty: "Medium",
+    problem: "Given link_text and actual_link strings, write code that prints a warning if the domain shown in link_text doesn't appear inside actual_link.",
+    requirements: ["Extract or compare the domain portion", "Print a clear warning when they mismatch"],
+    example: { input: 'link_text="paypal.com/login", actual_link="http://paypa1-secure-verify.net/login"', output: "Warning printed" },
+    starter: 'link_text = "paypal.com/login"\nactual_link = "http://paypa1-secure-verify.net/login"\n# your code here',
+    concept: "hk-phishing",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-hk-se-tf",
+    topicId: "hk-social-engineering",
+    title: "True or False: Verifying Claims",
+    difficulty: "Easy",
+    type: "true_false",
+    problem: "True or False: If a suspicious message provides a phone number to 'verify' a claim, calling that number is a safe way to confirm it's legitimate.",
+    correctAnswer: false,
+    hint: "If the attacker supplied that contact info, calling it just reaches the attacker again.",
+    xp: 10
+  },
+  {
+    id: "ex-hk-keylogger-mc",
+    topicId: "hk-keylogger",
+    title: "Why MFA Still Helps",
+    difficulty: "Medium",
+    type: "multiple_choice",
+    problem: "A keylogger successfully captures a user's password. Why does having MFA enabled still meaningfully limit the damage?",
+    options: ["MFA prevents keyloggers from being installed", "The attacker still lacks the second factor needed to complete login, even with the captured password", "MFA makes passwords unnecessary", "It doesn't help at all"],
+    correctIndex: 1,
+    hint: "A captured password alone isn't enough to log in if a second factor is required.",
+    xp: 10
+  },
+  {
+    id: "ex-hk-wep-tf",
+    topicId: "hk-wifi-wep",
+    title: "True or False: WEP's Flaw",
+    difficulty: "Medium",
+    type: "true_false",
+    problem: "True or False: A longer, more complex WEP key would have fixed WEP's core security weakness.",
+    correctAnswer: false,
+    hint: "WEP's flaw was in how it reused initialization vectors alongside the key — a protocol design issue, not key length.",
+    xp: 10
+  },
+  {
+    id: "ex-hk-wpa-1",
+    topicId: "hk-wifi-wpa",
+    title: "Passphrase Strength Check",
+    difficulty: "Medium",
+    problem: "Write is_strong_wifi_passphrase(passphrase) returning True only if it's at least 16 characters long.",
+    requirements: ["Check length >= 16"],
+    example: { input: '"correcthorsebatterystaple123"', output: "True" },
+    starter: "def is_strong_wifi_passphrase(passphrase):\n    # your code here\n    pass\n\nprint(is_strong_wifi_passphrase(\"correcthorsebatterystaple123\"))",
+    concept: "hk-wifi-wpa",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-hk-https-1",
+    topicId: "hk-https-defense",
+    title: "Check for HTTPS",
+    difficulty: "Easy",
+    problem: "Write looks_safe_to_submit(url) returning True only if the URL starts with 'https://'.",
+    requirements: ["Use str.startswith()"],
+    example: { input: '"http://example.com/login"', output: "False" },
+    starter: 'def looks_safe_to_submit(url):\n    # your code here\n    pass\n\nprint(looks_safe_to_submit("http://example.com/login"))',
+    concept: "hk-https-defense",
+    variantOf: null,
+    xp: 10
+  },
+  {
+    id: "ex-hk-android-mc",
+    topicId: "hk-android",
+    title: "Spot the Red Flag",
+    difficulty: "Easy",
+    type: "multiple_choice",
+    problem: "A simple flashlight app requests permission to read your SMS messages and contacts. What does this most likely indicate?",
+    options: ["This is completely normal for any app", "An excessive, unrelated permission request — a classic red flag for a malicious app", "Flashlight apps always need this", "It means the app is more secure"],
+    correctIndex: 1,
+    hint: "Ask whether the requested permission actually relates to the app's stated function.",
+    xp: 10
+  },
+  {
+    id: "ex-hk-dos-1",
+    topicId: "hk-dos",
+    title: "Flag Abnormal Traffic",
+    difficulty: "Medium",
+    problem: "Given a dict of IP to requests-per-minute, write code that lists IPs exceeding 1000 requests/min, sorted highest first.",
+    requirements: ["Filter by threshold", "Sort results descending by request count"],
+    example: { input: '{"203.0.113.5": 4200, "192.168.1.10": 12}', output: "[('203.0.113.5', 4200)]" },
+    starter: 'requests_per_minute_by_ip = {"203.0.113.5": 4200, "192.168.1.10": 12, "198.51.100.9": 1500}\n# your code here',
+    concept: "hk-dos",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-hk-wordpress-1",
+    topicId: "hk-wordpress",
+    title: "Match Known Vulnerable Versions",
+    difficulty: "Medium",
+    problem: "Given installed_plugins and known_vulnerable dicts, print every plugin whose installed version matches a known-vulnerable entry.",
+    requirements: ["Compare each installed version against known_vulnerable", "Print matches clearly"],
+    example: { input: 'installed={"contact-form-pro":"2.1.0"}, known={"contact-form-pro":"2.1.0"}', output: "contact-form-pro flagged" },
+    starter: 'installed_plugins = {"contact-form-pro": "2.1.0", "seo-booster": "4.5.2"}\nknown_vulnerable = {"contact-form-pro": "2.1.0"}\n# your code here',
+    concept: "hk-wordpress",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-hk-report-1",
+    topicId: "hk-vuln-reporting",
+    title: "Format a Finding",
+    difficulty: "Hard",
+    functionSignature: "def format_finding(finding):",
+    problem: "Write format_finding(finding) that returns a one-line string combining the CVSS score, title, and component from a finding dict.",
+    requirements: ["Return a formatted string, don't just print inside the function", "Include cvss, title, and component"],
+    example: { input: '{"title": "...", "component": "...", "cvss": 8.6}', output: "[8.6] Title — Component" },
+    starter: 'finding = {\n    "title": "Outdated plugin with known SQL injection",\n    "component": "contact-form-pro v2.1.0",\n    "cvss": 8.6,\n}\n\ndef format_finding(finding):\n    # your code here\n    pass\n\nprint(format_finding(finding))',
+    concept: "hk-vuln-reporting",
+    variantOf: null,
+    xp: 20
   }
 ];
 
@@ -2481,6 +3173,10 @@ const REFERENCE = [
   { id: "ref-dos-ddos", category: "Network Security", term: "DoS & DDoS Concepts", definition: "A Denial-of-Service attack overwhelms a system so legitimate users can't access it; a DDoS does so from many sources at once.", explanation: "Defenses include rate limiting, load balancing, CDNs/WAFs, and traffic monitoring.", syntax: "availability = can legitimate users reach the service?", example: "A sudden, massive spike in traffic from thousands of distinct IPs is a classic DDoS signature.", mistakes: "Assuming DoS is only about traffic volume — application-layer DoS can exhaust server resources with relatively little bandwidth.", related: ["CIA Triad"], whenToUse: "Understanding availability threats and how to defend against them." },
   { id: "ref-incident-response", category: "Incident Response", term: "Incident Response Basics", definition: "A structured process for handling a security incident: identify, contain, eradicate, recover, and document lessons learned.", explanation: "Having a plan before an incident happens is what separates a contained problem from a prolonged crisis.", syntax: "Identify → Contain → Eradicate → Recover → Lessons Learned", example: "Isolating an infected machine from the network (containment) before trying to clean it (eradication).", mistakes: "Skipping documentation/lessons-learned, which means the same incident type can recur unaddressed.", related: ["Vulnerability vs Risk"], whenToUse: "Responding to any confirmed or suspected security incident." },
   { id: "ref-owasp-top10", category: "Web Security", term: "OWASP Top 10 (concept)", definition: "A regularly updated, widely referenced list of the most critical web application security risks.", explanation: "SQL Injection and XSS (both covered in this library) are longtime fixtures of the list.", syntax: "owasp.org/www-project-top-ten/", example: "Broken access control, injection, and security misconfiguration are perennial top entries.", mistakes: "Treating the Top 10 as exhaustive — it's a prioritized starting point, not a complete checklist.", related: ["SQL Injection & Parameterized Queries", "XSS & Output Encoding"], whenToUse: "As a starting checklist when reviewing a web application's security." },
+  { id: "ref-phishing", category: "Social Engineering", term: "Phishing Indicators", definition: "The common warning signs of a phishing attempt: urgency, sender mismatch, generic greetings, and suspicious link destinations.", explanation: "Detection tools automate exactly these checks — domain reputation, link-text vs actual-URL mismatches, and known phishing fingerprints.", syntax: "check: sender domain, link destination vs link text, urgency language", example: 'link_text = "paypal.com/login"\nactual_link = "http://paypa1-secure-verify.net/login"  # mismatch', mistakes: "Judging legitimacy by visual polish alone — modern phishing pages can be pixel-identical to the real thing.", related: ["Social Engineering Tactics"], whenToUse: "Evaluating any unsolicited message asking for credentials or urgent action." },
+  { id: "ref-social-eng", category: "Social Engineering", term: "Social Engineering Tactics", definition: "Manipulating human psychology — authority, urgency, fear, helpfulness — to bypass technical security controls.", explanation: "The safest defense is independently verifying unexpected requests using contact info you already trust, never info the request itself provides.", syntax: "red flags: unsolicited contact + urgency + request for sensitive info + pressure not to verify", example: "A fake 'IT support' call asking for your password bypasses every technical control if you simply hand it over.", mistakes: "Verifying a claim using contact details supplied by the suspicious source itself.", related: ["Phishing Indicators"], whenToUse: "Any unexpected request for sensitive information, money, or system access." },
+  { id: "ref-security-headers", category: "Web Security", term: "Security Headers", definition: "HTTP response headers that instruct the browser to enforce additional protections for a page.", explanation: "Content-Security-Policy, X-Frame-Options, Strict-Transport-Security, and X-Content-Type-Options are common, high-value examples.", syntax: "Content-Security-Policy: default-src 'self'\nStrict-Transport-Security: max-age=31536000", example: "HSTS tells the browser to never connect over plain HTTP again, closing a downgrade-attack window.", mistakes: "Assuming HTTPS alone is sufficient without these additional defense-in-depth headers.", related: ["HTTP vs HTTPS", "XSS & Output Encoding"], whenToUse: "Reviewing or hardening any web application's HTTP responses." },
+  { id: "ref-mobile-security", category: "Mobile Security", term: "App Sandboxing & Permissions", definition: "Each mobile app runs isolated by default; permissions are explicit, revocable grants of access to sensitive resources.", explanation: "A malicious app typically requests permissions unrelated to its stated function — a classic detection signal.", syntax: "app runs sandboxed -> requests permission -> user grants/denies -> access scoped to that grant", example: "A flashlight app requesting SMS and contacts access is requesting permissions unrelated to its function.", mistakes: "Granting every requested permission without checking relevance to the app's purpose.", related: ["Authentication vs Authorization"], whenToUse: "Reviewing app permissions before installing, or assessing mobile app security." },
 ];
 
 const BEGINNER_PROJECTS = [
@@ -3571,10 +4267,10 @@ const AUTH_KEY = "pycademy-account-v1";
 const SESSION_KEY = "pycademy-session-v1";
 
 // TEMP: real storage-backed login isn't reliable in this environment yet, so
-// this remains a stand-in "backend" that accepts locally entered test values.
-// Replace this whole block with a real auth call later, and flip
-// AUTH_BYPASS_AUTO_LOGIN to false to restore the original signup/login/
-// forgot-password flow that's still underneath this.
+// this bypasses credential checking entirely and logs in with whatever name/
+// email/password is typed — useful for testing signup as different users.
+// Flip AUTH_BYPASS_AUTO_LOGIN to false to restore the original, fully
+// validated signup/login/forgot-password flow that's still underneath this.
 const AUTH_BYPASS_AUTO_LOGIN = true;
 
 // Guards against window.storage calls that hang instead of resolving/rejecting,
@@ -3630,7 +4326,7 @@ function AuthScreen({ onAuthed }) {
   useEffect(() => {
     if (AUTH_BYPASS_AUTO_LOGIN) {
       // Skip the storage round-trip entirely — nothing to block on.
-      setMode("login");
+      setMode("signup");
       setCheckedExisting(true);
       return;
     }
@@ -3660,17 +4356,17 @@ function AuthScreen({ onAuthed }) {
     e.preventDefault();
 
     if (AUTH_BYPASS_AUTO_LOGIN) {
-      const v = validate();
-      if (v) { setError(v); return; }
       setError("");
       setLoading(true);
-      const account = { name: name.trim() || "Test User", email: email.trim().toLowerCase(), password, createdAt: Date.now() };
+      const fallbackName = name.trim() || "Learner";
+      const fallbackEmail = (email.trim() || "learner@example.com").toLowerCase();
       // Best-effort persistence in the background — doesn't block or fail the login.
       try {
+        const account = { name: fallbackName, email: fallbackEmail, password: password || "temp", createdAt: Date.now() };
         window.storage.set(AUTH_KEY, JSON.stringify(account), false).catch(() => {});
-        window.storage.set(SESSION_KEY, JSON.stringify({ email: account.email }), false).catch(() => {});
+        window.storage.set(SESSION_KEY, JSON.stringify({ email: fallbackEmail }), false).catch(() => {});
       } catch (e) {}
-      onAuthed({ name: account.name, email: account.email, isNewAccount: mode === "signup" });
+      onAuthed({ name: fallbackName, email: fallbackEmail, isNewAccount: mode === "signup" });
       setLoading(false);
       return;
     }

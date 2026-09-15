@@ -79,6 +79,65 @@
 			],
 			"isBackground": true,
 			"problemMatcher": []
+		},
+		{
+			"label": "Build current Pycademy",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"build"
+			],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "Run current Pycademy",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"dev",
+				"--",
+				"--host",
+				"127.0.0.1",
+				"--port",
+				"5173"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Run Pycademy again",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"dev",
+				"--",
+				"--host",
+				"127.0.0.1",
+				"--port",
+				"5175"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Run Pycademy fresh",
+			"type": "shell",
+			"command": "npm.cmd",
+			"args": [
+				"run",
+				"dev",
+				"--",
+				"--host",
+				"127.0.0.1",
+				"--port",
+				"5176"
+			],
+			"isBackground": true,
+			"problemMatcher": []
 		}
 	]
 }
