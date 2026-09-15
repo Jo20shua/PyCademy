@@ -3938,7 +3938,10 @@ const STORAGE_KEY = "pycademy-state-v1";
 function freshState() {
   return {
     onboarded: false,
-    profile: { name: "", email: "", experience: "", goals: [], pace: "", studyTime: "", ide: "", tracks: [], difficultyPref: "standard" },
+    profile: { name: "", fullName: "", email: "", experience: "", goals: [], pace: "", studyTime: "", ide: "", tracks: [], difficultyPref: "standard" },
+    knownEmails: [],          // frontend-only simulation of a users/accounts table, for the
+                               // "email already registered" check — see EMAIL_CHANGE_SERVICE
+    pendingEmailChange: null, // { newEmail, code, expiresAt } while a change is awaiting verification
     xp: 0,
     streak: 0,
     lastStudyDay: null,
@@ -4287,6 +4290,66 @@ function isValidEmail(v) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
+/* =========================================================================
+   EMAIL CHANGE SERVICE — frontend mock of a future backend.
+   This is the ONLY place that knows how a verification code is generated
+   and checked. When a real backend exists, replace the bodies of
+   requestEmailChange()/verifyEmailChangeCode() with calls to:
+     POST /auth/email-change/request
+     POST /auth/email-change/verify
+   and delete generateVerificationCode() — the backend becomes the sole
+   authority for code generation, sending, expiration, rate limiting, and
+   the authoritative "is this email already registered" check (which must
+   happen server-side, against the real accounts database, as part of the
+   same transaction that creates the verification challenge — not as a
+   separate earlier check, to avoid race conditions). Nothing UI-facing
+   should need to change shape when that swap happens.
+   ========================================================================= */
+
+const EMAIL_CHANGE_CODE_TTL_MS = 5 * 60 * 1000; // 5 minutes, mirrors a realistic backend TTL
+
+function generateVerificationCode() {
+  // Uppercase letters + digits, no ambiguous chars (0/O, 1/I) — dev-mode only.
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+// Simulates: POST /auth/email-change/request
+// A real backend would: normalize/validate the email, check the accounts
+// database for an existing match, and only then create+send a code.
+async function requestEmailChange({ newEmail, currentEmail, knownEmails }) {
+  const normalized = newEmail.trim().toLowerCase();
+  if (!isValidEmail(normalized)) {
+    return { ok: false, error: "Enter a valid email address." };
+  }
+  if (normalized === currentEmail.trim().toLowerCase()) {
+    return { ok: false, error: "That's already your current email address." };
+  }
+  if (knownEmails.includes(normalized)) {
+    return { ok: false, error: "That email is already associated with another account." };
+  }
+  // DEV MOCK ONLY: a real backend generates this server-side and never
+  // returns it to the frontend — it emails it instead.
+  const code = generateVerificationCode();
+  return {
+    ok: true,
+    newEmail: normalized,
+    code,
+    expiresAt: Date.now() + EMAIL_CHANGE_CODE_TTL_MS,
+    devNote: "Development mode: verification code generated locally.",
+  };
+}
+
+// Simulates: POST /auth/email-change/verify
+function verifyEmailChangeCode(enteredCode, pendingChange) {
+  if (!pendingChange) return { ok: false, error: "No email change is in progress." };
+  if (Date.now() > pendingChange.expiresAt) return { ok: false, error: "This code has expired. Request a new one." };
+  if (enteredCode.trim().toUpperCase() !== pendingChange.code) return { ok: false, error: "Incorrect code — check and try again." };
+  return { ok: true, newEmail: pendingChange.newEmail };
+}
+
 function PasswordField({ value, onChange, placeholder, autoComplete }) {
   const [show, setShow] = useState(false);
   return (
@@ -4358,15 +4421,15 @@ function AuthScreen({ onAuthed }) {
     if (AUTH_BYPASS_AUTO_LOGIN) {
       setError("");
       setLoading(true);
-      const fallbackName = name.trim() || "Learner";
+      const fallbackFullName = name.trim() || "Learner";
       const fallbackEmail = (email.trim() || "learner@example.com").toLowerCase();
       // Best-effort persistence in the background — doesn't block or fail the login.
       try {
-        const account = { name: fallbackName, email: fallbackEmail, password: password || "temp", createdAt: Date.now() };
+        const account = { name: fallbackFullName, email: fallbackEmail, password: password || "temp", createdAt: Date.now() };
         window.storage.set(AUTH_KEY, JSON.stringify(account), false).catch(() => {});
         window.storage.set(SESSION_KEY, JSON.stringify({ email: fallbackEmail }), false).catch(() => {});
       } catch (e) {}
-      onAuthed({ name: fallbackName, email: fallbackEmail, isNewAccount: mode === "signup" });
+      onAuthed({ fullName: fallbackFullName, email: fallbackEmail, isNewAccount: mode === "signup" });
       setLoading(false);
       return;
     }
@@ -4380,7 +4443,7 @@ function AuthScreen({ onAuthed }) {
         const account = { name: name.trim(), email: email.trim().toLowerCase(), password, createdAt: Date.now() };
         await window.storage.set(AUTH_KEY, JSON.stringify(account), false);
         await window.storage.set(SESSION_KEY, JSON.stringify({ email: account.email }), false);
-        onAuthed({ name: account.name, email: account.email, isNewAccount: true });
+        onAuthed({ fullName: account.name, email: account.email, isNewAccount: true });
       } else {
         const res = await window.storage.get(AUTH_KEY, false);
         const account = res && res.value ? JSON.parse(res.value) : null;
@@ -4390,7 +4453,7 @@ function AuthScreen({ onAuthed }) {
           return;
         }
         await window.storage.set(SESSION_KEY, JSON.stringify({ email: account.email }), false);
-        onAuthed({ name: account.name, email: account.email, isNewAccount: false });
+        onAuthed({ fullName: account.name, email: account.email, isNewAccount: false });
       }
     } catch (e) {
       setError("Something went wrong saving your session — please try again.");
@@ -7155,15 +7218,19 @@ function ProfileHome({ state, go, onLogout }) {
   const { level } = xpToLevel(state.xp);
   const earned = ACHIEVEMENTS_CATALOG.filter((a) => state.achievements.includes(a.id));
   const locked = ACHIEVEMENTS_CATALOG.filter((a) => !state.achievements.includes(a.id));
+  const displayName = state.profile.fullName || state.profile.name || "Learner";
 
   return (
     <div className="p-4 md:p-8 max-w-3xl mx-auto space-y-6">
       <Card className="p-5 flex items-center gap-4 flex-wrap">
         <div className="w-14 h-14 rounded-full bg-violet-950 border border-violet-800 flex items-center justify-center font-semibold text-violet-300">
-          {(state.profile.name || "?").charAt(0).toUpperCase()}
+          {displayName.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1 min-w-[140px]">
-          <h1 className="text-lg font-semibold">{state.profile.name || "Learner"}</h1>
+          <h1 className="text-lg font-semibold">{displayName}</h1>
+          {state.profile.name && state.profile.fullName && state.profile.name !== state.profile.fullName && (
+            <p className="text-xs text-slate-500">Goes by "{state.profile.name}"</p>
+          )}
           <p className="text-xs text-slate-500">{state.profile.email ? `${state.profile.email} · ` : ""}{state.profile.experience} · Level {level} · {state.xp} XP</p>
         </div>
         <div className="flex gap-2">
@@ -7230,6 +7297,112 @@ function SettingsHome({ state, updateState, onLogout }) {
   const set = (patch) => updateState((s) => ({ ...s, settings: { ...s.settings, ...patch } }));
   const [resetConfirm, setResetConfirm] = useState(false);
 
+  // --- Change Email flow state (UI-only; all verification logic lives in
+  // requestEmailChange()/verifyEmailChangeCode() so it's a clean swap for a
+  // real backend later) ---
+  const [emailStep, setEmailStep] = useState("idle"); // idle | request | verify
+  const [newEmail, setNewEmail] = useState("");
+  const [confirmEmail, setConfirmEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [codeInput, setCodeInput] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailToast, setEmailToast] = useState(null); // { text }
+
+  useEffect(() => {
+    // Resume an in-flight (unexpired) change after a refresh; drop a stale one.
+    if (state.pendingEmailChange) {
+      if (Date.now() > state.pendingEmailChange.expiresAt) {
+        updateState((s) => ({ ...s, pendingEmailChange: null }));
+      } else {
+        setEmailStep("verify");
+      }
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  const showToast = (text) => {
+    setEmailToast(text);
+    setTimeout(() => setEmailToast(null), 3000);
+  };
+
+  const startChangeEmail = () => {
+    setEmailStep("request");
+    setNewEmail("");
+    setConfirmEmail("");
+    setEmailError("");
+  };
+
+  const submitNewEmail = async (e) => {
+    e.preventDefault();
+    setEmailError("");
+    if (!newEmail.trim() || !confirmEmail.trim()) { setEmailError("Enter and confirm your new email address."); return; }
+    if (!isValidEmail(newEmail.trim())) { setEmailError("Enter a valid email address."); return; }
+    if (newEmail.trim().toLowerCase() !== confirmEmail.trim().toLowerCase()) { setEmailError("Emails don't match."); return; }
+    setEmailLoading(true);
+    const result = await requestEmailChange({ newEmail, currentEmail: state.profile.email || "", knownEmails: state.knownEmails });
+    setEmailLoading(false);
+    if (!result.ok) { setEmailError(result.error); return; }
+    updateState((s) => ({ ...s, pendingEmailChange: { newEmail: result.newEmail, code: result.code, expiresAt: result.expiresAt } }));
+    setCodeInput("");
+    setCodeError("");
+    setEmailStep("verify");
+  };
+
+  const resendCode = async () => {
+    if (!state.pendingEmailChange) return;
+    setEmailLoading(true);
+    const result = await requestEmailChange({ newEmail: state.pendingEmailChange.newEmail, currentEmail: state.profile.email || "", knownEmails: state.knownEmails });
+    setEmailLoading(false);
+    if (!result.ok) { setCodeError(result.error); return; }
+    updateState((s) => ({ ...s, pendingEmailChange: { newEmail: result.newEmail, code: result.code, expiresAt: result.expiresAt } }));
+    setCodeInput("");
+    setCodeError("");
+    showToast("New verification code generated.");
+  };
+
+  const submitVerifyCode = (e) => {
+    e.preventDefault();
+    setCodeError("");
+    const result = verifyEmailChangeCode(codeInput, state.pendingEmailChange);
+    if (!result.ok) { setCodeError(result.error); return; }
+    updateState((s) => {
+      const oldEmail = (s.profile.email || "").toLowerCase();
+      const updatedKnown = s.knownEmails.filter((e) => e !== oldEmail);
+      if (!updatedKnown.includes(result.newEmail)) updatedKnown.push(result.newEmail);
+      return { ...s, profile: { ...s.profile, email: result.newEmail }, knownEmails: updatedKnown, pendingEmailChange: null };
+    });
+    // Keep the login-check record (AUTH_KEY) and active session (SESSION_KEY)
+    // in sync so a future login attempt uses the new email as the account's
+    // current identity — same single source of truth, just two persisted
+    // copies of it until a real backend replaces both with a database.
+    (async () => {
+      try {
+        const res = await window.storage.get(AUTH_KEY, false);
+        const account = res && res.value ? JSON.parse(res.value) : null;
+        if (account) {
+          await window.storage.set(AUTH_KEY, JSON.stringify({ ...account, email: result.newEmail }), false);
+          await window.storage.set(SESSION_KEY, JSON.stringify({ email: result.newEmail }), false);
+        }
+      } catch (e) {}
+    })();
+    setEmailStep("idle");
+    setNewEmail("");
+    setConfirmEmail("");
+    setCodeInput("");
+    showToast("Email address updated.");
+  };
+
+  const cancelEmailChange = () => {
+    updateState((s) => ({ ...s, pendingEmailChange: null }));
+    setEmailStep("idle");
+    setNewEmail("");
+    setConfirmEmail("");
+    setCodeInput("");
+    setEmailError("");
+    setCodeError("");
+  };
+
   const doReset = async () => {
     try { await window.storage.delete(STORAGE_KEY, false); } catch (e) {}
     window.location.reload();
@@ -7291,8 +7464,68 @@ function SettingsHome({ state, updateState, onLogout }) {
 
       <Card className="p-5">
         <h3 className="font-medium text-sm mb-1">Account</h3>
-        <p className="text-xs text-slate-500 mb-3">{state.profile.email || "No email on file"}</p>
-        <Button variant="secondary" size="sm" onClick={onLogout}><LogOut size={14} /> Log out</Button>
+
+        {emailStep === "idle" && (
+          <>
+            <p className="text-xs text-slate-500 mb-3">{state.profile.email || "No email on file"}</p>
+            <div className="flex gap-2 flex-wrap">
+              <Button variant="secondary" size="sm" onClick={startChangeEmail}><Mail size={14} /> Change Email</Button>
+              <Button variant="ghost" size="sm" onClick={onLogout}><LogOut size={14} /> Log out</Button>
+            </div>
+          </>
+        )}
+
+        {emailStep === "request" && (
+          <form onSubmit={submitNewEmail}>
+            <p className="text-xs text-slate-500 mb-3">Current email: <span className="text-slate-300">{state.profile.email || "none"}</span></p>
+            <div className="space-y-2.5 mb-3">
+              <div className="relative">
+                <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="New email address" className="w-full bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-cyan-500" />
+              </div>
+              <div className="relative">
+                <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input type="email" value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value)} placeholder="Confirm new email address" className="w-full bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-cyan-500" />
+              </div>
+            </div>
+            {emailError && <p className="text-xs text-rose-400 mb-3">{emailError}</p>}
+            <div className="flex gap-2">
+              <Button type="submit" size="sm" disabled={emailLoading}>
+                {emailLoading ? <RefreshCw size={13} className="animate-spin" /> : <ArrowRight size={13} />} Send verification code
+              </Button>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setEmailStep("idle")}>Cancel</Button>
+            </div>
+          </form>
+        )}
+
+        {emailStep === "verify" && state.pendingEmailChange && (
+          <form onSubmit={submitVerifyCode}>
+            <p className="text-sm text-slate-300 mb-1">Verify your new email</p>
+            <p className="text-xs text-slate-500 mb-3">We simulated sending a verification code to <span className="text-slate-300">{state.pendingEmailChange.newEmail}</span>.</p>
+
+            <div className="flex items-start gap-2 bg-amber-950/30 border border-amber-900/50 rounded-lg p-2.5 mb-3">
+              <FlaskConical size={13} className="text-amber-400 mt-0.5 shrink-0" />
+              <p className="text-xs text-amber-200">Development mode: verification code generated locally: <span className="font-mono font-semibold">{state.pendingEmailChange.code}</span>. This box goes away once a real email service is connected.</p>
+            </div>
+
+            <input
+              value={codeInput}
+              onChange={(e) => setCodeInput(e.target.value.toUpperCase().slice(0, 6))}
+              placeholder="6-character code"
+              maxLength={6}
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-mono tracking-[0.3em] text-center focus:outline-none focus:border-cyan-500 mb-3"
+            />
+            {codeError && <p className="text-xs text-rose-400 mb-3">{codeError}</p>}
+
+            <div className="flex gap-2 flex-wrap">
+              <Button type="submit" size="sm" disabled={codeInput.length !== 6}><Check size={13} /> Verify Email</Button>
+              <Button type="button" variant="secondary" size="sm" onClick={resendCode} disabled={emailLoading}>
+                {emailLoading ? <RefreshCw size={13} className="animate-spin" /> : <RefreshCw size={13} />} Resend code
+              </Button>
+              <Button type="button" variant="ghost" size="sm" onClick={cancelEmailChange}>Cancel</Button>
+            </div>
+          </form>
+        )}
       </Card>
 
       <Card className="p-5 border-rose-900/50">
@@ -7307,6 +7540,13 @@ function SettingsHome({ state, updateState, onLogout }) {
           </div>
         )}
       </Card>
+
+      {emailToast && (
+        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-slate-900 border border-emerald-800 text-slate-100 text-sm px-4 py-3 rounded-lg shadow-lg">
+          <CheckCircle2 size={16} className="text-emerald-400" />
+          {emailToast}
+        </div>
+      )}
     </div>
   );
 }
@@ -7439,13 +7679,17 @@ export default function App() {
 
   const handleSearch = (q) => go("reference", { q });
 
-  const handleAuthed = ({ name, email }) => {
+  const handleAuthed = ({ fullName, email }) => {
     setAuthed(true);
-    // Onboarding (the "Where do you want Python to take you?" flow) now runs
-    // normally for any account that hasn't completed it yet — this just
-    // carries the name/email from the auth form into the profile so
-    // onboarding can greet them by name.
-    updateState((s) => ({ ...s, profile: { ...s.profile, name: s.profile.name || name, email } }));
+    // fullName (from Sign Up) and profile.name (the "What should we call you?"
+    // preferred/display name from onboarding) are intentionally kept separate.
+    // profile.name is NOT set here — onboarding starts empty and the user
+    // chooses their own display name, used for the dashboard greeting.
+    updateState((s) => {
+      const emailLower = email.trim().toLowerCase();
+      const known = s.knownEmails.includes(emailLower) ? s.knownEmails : [...s.knownEmails, emailLower];
+      return { ...s, profile: { ...s.profile, fullName: s.profile.fullName || fullName, email: emailLower }, knownEmails: known };
+    });
   };
 
   const handleLogout = async () => {
