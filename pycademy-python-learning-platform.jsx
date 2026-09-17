@@ -14,18 +14,39 @@ import {
    CONTENT LAYER — curriculum, exercises, reference, projects
    ========================================================================= */
 
+const PYTHON_CORE_SECTIONS = [
+  { id: "basics", title: "Python Basics", desc: "Syntax, logic, data structures, functions, files, modules, and OOP — the full language foundation." },
+  { id: "development", title: "Python Development", desc: "Moving from scripts to maintainable, tested, version-controlled software." },
+  { id: "automation", title: "Automation", desc: "Using Python to automate real, repetitive tasks." },
+  { id: "webscraping", title: "Web Scraping", desc: "Extracting structured data from the web, responsibly." },
+  { id: "apis", title: "APIs & REST", desc: "Consuming (and eventually building) web APIs." },
+  { id: "databases", title: "Databases", desc: "Storing and querying data with SQL and SQLite." },
+  { id: "backend", title: "Web Backend", desc: "Building real backend applications with Flask." },
+  { id: "gui", title: "GUI Development", desc: "Building desktop applications with Tkinter." },
+  { id: "deployment", title: "Deployment", desc: "Taking a Python project from your machine to something others can use." },
+];
+
 const LEVELS = [
-  { id: "lvl0", num: 0, title: "Python Environment", track: "core", topics: ["What Python is", "Installing Python", "Python interpreter", ".py files", "Running programs", "PyCharm basics", "VS Code basics", "print()", "Comments", "Indentation", "Basic syntax"] },
-  { id: "lvl1", num: 1, title: "Python Fundamentals", track: "core", topics: ["Variables", "Naming rules", "Integers & floats", "Strings", "Booleans", "type()", "Type conversion", "input()", "Output", "f-strings", "Arithmetic operators", "Comparison operators", "Logical operators", "Assignment operators"] },
-  { id: "lvl2", num: 2, title: "Programming Logic", track: "core", topics: ["if / elif / else", "Nested conditions", "while loops", "for loops", "range()", "break", "continue", "pass", "Basic problem solving"] },
-  { id: "lvl3", num: 3, title: "Data Structures", track: "core", topics: ["Lists", "Tuples", "Dictionaries", "Sets", "Indexing", "Slicing", "Adding/removing/updating", "Iterating collections", "Nested structures", "String methods"] },
-  { id: "lvl4", num: 4, title: "Functions", track: "core", topics: ["Defining functions", "Parameters & arguments", "Return values", "Default arguments", "Keyword arguments", "Scope", "Local/global variables", "*args", "**kwargs", "Function design"] },
-  { id: "lvl5", num: 5, title: "Errors & Debugging", track: "core", topics: ["Syntax errors", "Runtime errors", "Logic errors", "Tracebacks", "try / except", "else / finally", "raise", "Debugging techniques", "IDE debugger"] },
-  { id: "lvl6", num: 6, title: "Files & Data", track: "core", topics: ["Reading files", "Writing files", "with", "pathlib", "JSON", "CSV", "Basic data persistence"] },
-  { id: "lvl7", num: 7, title: "Regular Expressions", track: "core", topics: ["Regex concepts", "Character classes", "Quantifiers", "Groups", "Searching", "Matching", "re module", "Text validation"] },
-  { id: "lvl8", num: 8, title: "Modules & Packages", track: "core", topics: ["import", "from ... import", "Standard library", "Creating modules", "Creating packages", "__name__", "__main__", "Package organization"] },
-  { id: "lvl9", num: 9, title: "Object-Oriented Programming", track: "core", topics: ["Classes", "Objects", "Attributes", "Methods", "__init__", "Instance vs class attributes", "Encapsulation", "Inheritance", "Polymorphism", "Composition", "Special methods"] },
-  { id: "lvl10", num: 10, title: "Professional Python Workflow", track: "core", topics: ["Virtual environments", "venv", "pip", "requirements.txt", "pyproject.toml", "Dependency management", "Git & GitHub", "Testing", "pytest", "Assertions", "Docstrings", "Type hints", "PEP 8", "Clean code", "Project structure"] },
+  { id: "lvl0", num: 0, section: "basics", title: "Python Environment", track: "core", topics: ["What Python is", "Installing Python", "Python interpreter", ".py files", "Running programs", "PyCharm basics", "VS Code basics", "print()", "Comments", "Indentation", "Basic syntax"] },
+  { id: "lvl1", num: 1, section: "basics", title: "Python Fundamentals", track: "core", topics: ["Variables", "Naming rules", "Integers & floats", "Strings", "Booleans", "type()", "Type conversion", "input()", "Output", "f-strings", "Arithmetic operators", "Comparison operators", "Logical operators", "Assignment operators"] },
+  { id: "lvl2", num: 2, section: "basics", title: "Programming Logic", track: "core", topics: ["if / elif / else", "Nested conditions", "while loops", "for loops", "range()", "break", "continue", "pass", "Basic problem solving"] },
+  { id: "lvlturtle", num: 2, section: "basics", title: "Turtle: Visual Programming", track: "core", topics: ["Turtle basics", "Movement", "Loops with Turtle", "Functions with Turtle", "Simple visual projects", "Problem decomposition"] },
+  { id: "lvl3", num: 3, section: "basics", title: "Data Structures", track: "core", topics: ["Lists", "Tuples", "Dictionaries", "Sets", "Indexing", "Slicing", "Adding/removing/updating", "Iterating collections", "Nested structures", "String methods"] },
+  { id: "lvl4", num: 4, section: "basics", title: "Functions", track: "core", topics: ["Defining functions", "Parameters & arguments", "Return values", "Default arguments", "Keyword arguments", "Scope", "Local/global variables", "*args", "**kwargs", "Function design"] },
+  { id: "lvl5", num: 5, section: "basics", title: "Errors & Debugging", track: "core", topics: ["Syntax errors", "Runtime errors", "Logic errors", "Tracebacks", "try / except", "else / finally", "raise", "Debugging techniques", "IDE debugger"] },
+  { id: "lvl6", num: 6, section: "basics", title: "Files & Data", track: "core", topics: ["Reading files", "Writing files", "with", "pathlib", "JSON", "CSV", "Basic data persistence"] },
+  { id: "lvl7", num: 7, section: "basics", title: "Regular Expressions", track: "core", topics: ["Regex concepts", "Character classes", "Quantifiers", "Groups", "Searching", "Matching", "re module", "Text validation"] },
+  { id: "lvl8", num: 8, section: "basics", title: "Modules & Packages", track: "core", topics: ["import", "from ... import", "Standard library", "Creating modules", "Creating packages", "__name__", "__main__", "Package organization"] },
+  { id: "lvl9", num: 9, section: "basics", title: "Object-Oriented Programming", track: "core", topics: ["Classes", "Objects", "Attributes", "Methods", "__init__", "Instance vs class attributes", "Encapsulation", "Inheritance", "Polymorphism", "Composition", "Special methods"] },
+  { id: "lvl10", num: 10, section: "development", title: "Professional Python Workflow", track: "core", topics: ["Virtual environments", "venv", "pip", "requirements.txt", "pyproject.toml", "Dependency management", "Git & GitHub", "Testing", "pytest", "Assertions", "Docstrings", "Type hints", "PEP 8", "Clean code", "Project structure"] },
+  { id: "lvl11", num: 11, section: "development", title: "Testing & Project Structure", track: "core", topics: ["pytest basics", "Writing test functions", "Assertions", "Test organization", "Logging vs print debugging", "README files", "Separation of concerns", "Basic software architecture"] },
+  { id: "lvl12", num: 12, section: "automation", title: "Automation", track: "core", topics: ["File & folder automation", "os module", "shutil", "subprocess", "Renaming/organizing files", "Batch processing", "Reading/writing structured data", "Scheduled automation concepts", "Generating reports", "Safe automation practices"] },
+  { id: "lvl13", num: 13, section: "webscraping", title: "Web Scraping", track: "core", topics: ["How the web works", "HTTP basics", "URLs", "HTML fundamentals", "DOM concepts", "requests library", "BeautifulSoup", "Finding elements", "Extracting text/attributes", "Pagination", "Cleaning scraped data", "robots.txt & responsible scraping"] },
+  { id: "lvl14", num: 14, section: "apis", title: "APIs & REST", track: "core", topics: ["What an API is", "Client/server concepts", "GET/POST/PUT/PATCH/DELETE", "Status codes", "Headers", "Query & path parameters", "Request bodies", "Python requests", "Parsing JSON responses", "API keys & auth concepts", "Consuming public APIs"] },
+  { id: "lvl15", num: 15, section: "databases", title: "Databases", track: "core", topics: ["Relational databases", "Tables/rows/columns", "Primary & foreign keys", "SQL fundamentals", "SELECT/INSERT/UPDATE/DELETE", "WHERE/ORDER BY/GROUP BY", "JOIN concepts", "SQLite + Python", "Parameterized queries", "Transactions", "Basic database design"] },
+  { id: "lvl16", num: 16, section: "backend", title: "Web Backend with Flask", track: "core", topics: ["What backend development is", "Flask application structure", "Routes", "URL/query parameters", "Request data & responses", "Jinja templates", "Forms & validation", "JSON responses", "REST APIs with Flask", "Databases + Flask", "Sessions & auth concepts", "Environment configuration"] },
+  { id: "lvl17", num: 17, section: "gui", title: "GUI Development with Tkinter", track: "core", topics: ["GUI fundamentals", "Windows & widgets", "Labels/buttons/inputs", "Layouts", "Events & callbacks", "Forms & validation", "Menus & dialogs", "Multiple screens", "Application state", "Organizing larger GUI apps"] },
+  { id: "lvl18", num: 18, section: "deployment", title: "Deployment", track: "core", topics: ["Development vs production", "Project preparation", "Dependency management for deployment", "Environment variables & secrets", "Production configuration", "Logs & monitoring basics", "Deploying Python/Flask apps", "Hosting concepts", "Updating deployed applications"] },
 ];
 
 const LESSONS = [
@@ -667,6 +688,1044 @@ const LESSONS = [
         options: ["Git can't handle folders", "It's large, machine-specific, and easily recreated from requirements.txt", "Virtual environments don't contain code", "GitHub blocks it automatically"],
         answer: 1,
         explain: "Environments are regenerable from requirements.txt and vary by machine, so tracking them in Git just adds noise and bloat."
+      }
+    ]
+  },
+  {
+    id: "l-turtle",
+    levelId: "lvlturtle",
+    title: "Turtle: Visual Programming",
+    difficulty: "Easy",
+    minutes: 12,
+    prereq: ["l-loops"],
+    concept: "Turtle graphics gives you an on-screen 'pen' you steer with code — a way to see the direct result of loops, functions, and logic instead of just reading text output.",
+    analogy: "Programming with Turtle is like giving directions to a robot holding a pen on a piece of paper: 'move forward, turn right, repeat' — the paper shows you exactly what your instructions actually did.",
+    whyItMatters: "Seeing a bug immediately as a wrong shape on screen builds debugging intuition faster than staring at printed numbers — this is why visual programming is such a common way to reinforce fundamentals.",
+    explanation: [
+      "`turtle.forward(distance)` moves the turtle forward, drawing a line as it goes; `turtle.right(angle)` / `turtle.left(angle)` rotate it.",
+      "Combining movement with a for loop is how you draw repeated shapes — a square is just 'move forward, turn 90°' repeated 4 times.",
+      "Wrapping a shape-drawing routine in a function lets you reuse it — draw a square in three different places by calling the function three times.",
+      "This is really the same skill as everything else in this course — breaking a problem into small repeatable steps (problem decomposition) — just with immediate visual feedback."
+    ],
+    syntax: "import turtle\nt = turtle.Turtle()\nt.forward(100)\nt.right(90)",
+    example: 'import turtle\n\nt = turtle.Turtle()\nfor _ in range(4):\n    t.forward(100)\n    t.right(90)\nturtle.done()',
+    commonMistakes: [
+      "Forgetting turtle.done() (or mainloop()) at the end, so the drawing window closes immediately.",
+      "Using the wrong turn angle for a shape — a square needs 90°, but other regular polygons need 360 divided by the number of sides.",
+      "Writing the same movement code four times instead of using a loop — the whole point of this exercise is practicing loops, not memorizing coordinates."
+    ],
+    practice: {
+      prompt: "Write a loop that draws a square with 100-unit sides using turtle.",
+      starter: "import turtle\nt = turtle.Turtle()\n# your loop here\nturtle.done()",
+      hint: "Repeat 'forward(100)' then 'right(90)' four times."
+    },
+    challenge: {
+      prompt: "Write a function draw_polygon(t, sides, length) that draws any regular polygon by calculating the correct turn angle as 360 / sides."
+    },
+    knowledgeCheck: [
+      {
+        q: "What turn angle would draw a regular hexagon (6 sides) using this same forward/turn pattern?",
+        options: ["90 degrees", "45 degrees", "60 degrees", "180 degrees"],
+        answer: 2,
+        explain: "360 / 6 = 60 — the same pattern that gives 90° for a 4-sided square (360/4) generalizes to any regular polygon."
+      }
+    ]
+  },
+  {
+    id: "l-testing",
+    levelId: "lvl11",
+    title: "Testing with pytest",
+    difficulty: "Medium",
+    minutes: 14,
+    prereq: ["l-workflow"],
+    concept: "Automated tests are code that checks your code — running them takes seconds and catches regressions that manual testing would eventually miss.",
+    analogy: "Writing tests is like building a small robot that re-checks your work every time you make a change, instead of you manually re-verifying everything by hand.",
+    whyItMatters: "This is the single biggest shift between 'a script that seemed to work' and 'software you can confidently change later' — and it's expected knowledge on any real Python project.",
+    explanation: [
+      "pytest discovers test functions automatically — any function in a file named test_*.py starting with test_ gets run.",
+      "A test function typically calls the code you're testing and uses assert to check the result matches what you expect.",
+      "Organize tests to mirror your project: a function add() in calculator.py gets a test_add() in test_calculator.py.",
+      "logging is a more flexible alternative to scattering print() statements for debugging — it supports severity levels (DEBUG, INFO, WARNING, ERROR) and can be turned on/off without deleting code.",
+      "A good README explains what a project does and how to run it — the first thing anyone (including future you) reads before touching the code."
+    ],
+    syntax: "def test_add():\n    assert add(2, 3) == 5",
+    example: '# calculator.py\ndef add(a, b):\n    return a + b\n\n# test_calculator.py\nfrom calculator import add\n\ndef test_add():\n    assert add(2, 3) == 5\n\ndef test_add_negative():\n    assert add(-1, -1) == -2',
+    commonMistakes: [
+      "Writing only one giant test that checks many things at once — smaller, focused tests make failures easier to diagnose.",
+      "Forgetting that pytest only discovers functions starting with test_ in files starting with test_ — a typo silently means it never runs.",
+      "Testing only the 'happy path' and never checking edge cases (empty input, zero, negative numbers)."
+    ],
+    practice: {
+      prompt: "Write a test function test_add() that asserts add(2, 2) equals 4, assuming an add(a, b) function already exists.",
+      starter: "def test_add():\n    # your assertion here\n    pass",
+      hint: "assert add(2, 2) == 4"
+    },
+    challenge: {
+      prompt: "Write two more test functions for a hypothetical divide(a, b) function: one for a normal case, and one that checks dividing by zero raises an exception (hint: pytest.raises)."
+    },
+    knowledgeCheck: [
+      {
+        q: "What naming convention does pytest use to automatically discover test functions?",
+        options: ["Any function name works", "Functions must start with test_ in a file starting with test_", "Functions must be named main()", "Functions must end with _test"],
+        answer: 1,
+        explain: "pytest's default discovery looks for test_*.py files containing functions named test_*."
+      }
+    ]
+  },
+  {
+    id: "l-automation",
+    levelId: "lvl12",
+    title: "Automating Files & Folders",
+    difficulty: "Medium",
+    minutes: 15,
+    prereq: ["l-files"],
+    concept: "Python can automate exactly the repetitive file-management tasks you'd otherwise do by hand — renaming, organizing, and processing files in bulk.",
+    analogy: "Writing an automation script is like training a very literal assistant once, so it can repeat a tedious task perfectly every time instead of you doing it manually each time.",
+    whyItMatters: "This is one of the most immediately useful real-world applications of Python for non-specialists — automating your own repetitive computer tasks.",
+    explanation: [
+      "`pathlib.Path` (already familiar from Files & Data) is the modern way to list, filter, and manipulate files and folders.",
+      "`shutil` handles higher-level file operations pathlib doesn't: copying, moving, and deleting entire files or folders.",
+      "`subprocess` lets Python run other programs/commands and capture their output — useful for automating tasks that already have a command-line tool.",
+      "A safe automation habit: always test on a copy of your data first, and print/log what the script is about to do before it does anything destructive (like deleting or overwriting files).",
+      "'Scheduled automation' refers to running a script automatically on a timer (like a cron job or Task Scheduler) — the script itself doesn't need to know it's scheduled; that's an OS-level concern."
+    ],
+    syntax: "from pathlib import Path\nimport shutil\n\nfor file in Path(\"folder\").glob(\"*.txt\"):\n    ...\nshutil.move(src, dst)",
+    example: 'from pathlib import Path\n\ndef organize_by_extension(folder):\n    folder = Path(folder)\n    for file in folder.iterdir():\n        if file.is_file():\n            ext = file.suffix.lstrip(".") or "no_extension"\n            target_dir = folder / ext\n            target_dir.mkdir(exist_ok=True)\n            print(f"Would move {file.name} -> {target_dir}")  # dry run first',
+    commonMistakes: [
+      "Running a file-moving/deleting script for the first time directly on real, unbacked-up data instead of a test copy.",
+      "Forgetting that Path.iterdir() includes subfolders too — checking file.is_file() first avoids treating a folder like a file.",
+      "Hardcoding absolute paths specific to one machine, making the script impossible to reuse elsewhere."
+    ],
+    practice: {
+      prompt: "Write a function that lists every .txt file in a given folder using pathlib, printing each filename.",
+      starter: 'from pathlib import Path\n\ndef list_text_files(folder):\n    # your code here\n    pass\n\nlist_text_files(".")',
+      hint: "Path(folder).glob('*.txt') returns matching files you can loop over."
+    },
+    challenge: {
+      prompt: "Extend organize_by_extension from the example so it actually moves files (using shutil.move) instead of just printing — and explain in a comment why testing the 'dry run' version first matters."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why is it good practice to print what a file-organizing script WOULD do before actually running it?",
+        options: ["It makes the script run faster", "It lets you verify the logic is correct before risking real data with a destructive operation", "Python requires this", "It's not actually useful"],
+        answer: 1,
+        explain: "A 'dry run' catches logic mistakes before they cause irreversible damage to real files."
+      }
+    ]
+  },
+  {
+    id: "l-scraping",
+    levelId: "lvl13",
+    title: "Web Scraping Fundamentals",
+    difficulty: "Hard",
+    minutes: 17,
+    prereq: ["l-modules"],
+    concept: "Web scraping extracts structured data from HTML pages using code — requests fetches the page, BeautifulSoup parses and navigates its structure.",
+    analogy: "If a webpage is a newspaper, requests is what brings the newspaper to your desk, and BeautifulSoup is what lets you find and cut out just the specific article you need.",
+    whyItMatters: "Scraping is one of the most practical ways to turn public web data into something you can actually analyze in Python — but doing it responsibly is part of the skill, not an afterthought.",
+    explanation: [
+      "`requests.get(url)` fetches a page's HTML; check `.status_code` (200 means success) before assuming the content is valid.",
+      "BeautifulSoup parses that HTML into a navigable structure: `soup.find(\"h1\")` finds the first matching tag, `soup.find_all(\"a\")` finds all of them.",
+      "Extract visible text with `.text` and attributes (like a link's URL) with `[\"href\"]`.",
+      "A site's robots.txt file states which parts of the site it permits automated access to — checking it, along with a site's terms of service, is part of responsible scraping, not optional.",
+      "Rate limiting yourself (adding a small delay between requests) avoids overwhelming a server — treat scraping as a guest in someone else's house, not a right."
+    ],
+    syntax: 'import requests\nfrom bs4 import BeautifulSoup\n\nresponse = requests.get(url)\nsoup = BeautifulSoup(response.text, "html.parser")\nsoup.find_all("a")',
+    example: '# Practicing against a local/sample HTML string, not a live scrape:\nfrom bs4 import BeautifulSoup\n\nhtml = "<div><h1>Title</h1><p class=\'price\'>$19.99</p></div>"\nsoup = BeautifulSoup(html, "html.parser")\nprint(soup.find("h1").text)                 # Title\nprint(soup.find("p", class_="price").text)  # $19.99',
+    commonMistakes: [
+      "Scraping a site without checking robots.txt or its terms of service first.",
+      "Sending requests in a tight loop with no delay, which can overwhelm a server or get your IP blocked.",
+      "Assuming a request always succeeds — always check response.status_code before parsing the result."
+    ],
+    practice: {
+      prompt: "Given the sample html string in the example, use BeautifulSoup to extract and print just the price value.",
+      starter: 'from bs4 import BeautifulSoup\n\nhtml = "<div><h1>Title</h1><p class=\'price\'>$19.99</p></div>"\n# your code here',
+      hint: "soup.find(\"p\", class_=\"price\").text gets the price element's text."
+    },
+    challenge: {
+      prompt: "Write code that extracts all href attributes from a sample HTML string containing multiple <a> tags, storing them in a list."
+    },
+    knowledgeCheck: [
+      {
+        q: "What should you check before scraping a website?",
+        options: ["Nothing, scraping is always fine", "The site's robots.txt and terms of service to confirm automated access is permitted", "Only the page's color scheme", "The size of the HTML file"],
+        answer: 1,
+        explain: "robots.txt and a site's terms of service define what automated access is actually permitted — responsible scraping starts there."
+      }
+    ]
+  },
+  {
+    id: "l-apis",
+    levelId: "lvl14",
+    title: "Consuming APIs with requests",
+    difficulty: "Medium",
+    minutes: 15,
+    prereq: ["l-scraping"],
+    concept: "An API lets your program talk to another service directly through structured requests and responses — usually JSON — instead of parsing HTML meant for humans.",
+    analogy: "If scraping is reading a restaurant's menu off the wall, using an API is calling ahead and ordering directly from a person who speaks your exact language.",
+    whyItMatters: "APIs are the backbone of how modern software talks to other software — weather data, payment processing, maps, almost everything you'd want to integrate has an API.",
+    explanation: [
+      "The main HTTP methods: GET reads data, POST creates something, PUT/PATCH update something, DELETE removes something.",
+      "Status codes tell you what happened: 200s mean success, 400s mean your request was wrong (404 = not found), 500s mean the server had a problem.",
+      "`requests.get(url, params={...})` adds query parameters to the URL automatically; `response.json()` parses a JSON response straight into a Python dict/list.",
+      "Many APIs require an API key for authentication — always read it from an environment variable, never hardcode it in your script (the same secure-coding principle from earlier lessons applies directly here).",
+      "Always handle the case where a request fails (network error, bad status code) rather than assuming .json() will always succeed."
+    ],
+    syntax: 'import requests\nresponse = requests.get(url, params={"q": "value"})\nif response.status_code == 200:\n    data = response.json()',
+    example: '# Illustrative pattern — replace url with any public API you have permission to use:\nimport requests\n\nresponse = requests.get("https://api.example.com/data", params={"limit": 5})\nif response.status_code == 200:\n    data = response.json()\n    print(data)\nelse:\n    print(f"Request failed: {response.status_code}")',
+    commonMistakes: [
+      "Calling .json() without checking status_code first, causing a confusing crash on an error response.",
+      "Hardcoding an API key directly in a script instead of reading it from an environment variable.",
+      "Building query strings manually instead of using the params= argument, which handles encoding correctly."
+    ],
+    practice: {
+      prompt: "Write code that checks a response object's status_code and prints 'Success' if it's 200, otherwise prints the status code with an error message.",
+      starter: "# assume 'response' is already a requests.Response object\n# your code here",
+      hint: "if response.status_code == 200: ... else: print the code."
+    },
+    challenge: {
+      prompt: "Write a function fetch_json(url, params=None) that makes a GET request and returns the parsed JSON on success, or None on failure — handling both a bad status code and a network exception."
+    },
+    knowledgeCheck: [
+      {
+        q: "Where should an API key be stored in your code?",
+        options: ["Hardcoded as a string", "In a comment", "In an environment variable, read at runtime", "In the URL directly, always"],
+        answer: 2,
+        explain: "Environment variables keep credentials out of source code — the same principle as the earlier Secure Python lesson."
+      }
+    ]
+  },
+  {
+    id: "l-databases",
+    levelId: "lvl15",
+    title: "Databases & SQLite",
+    difficulty: "Hard",
+    minutes: 18,
+    prereq: ["l-apis"],
+    concept: "A relational database stores structured data in tables, and SQL is the language you use to create, read, update, and delete that data.",
+    analogy: "A table is like a spreadsheet with strict rules: every row has the same columns, and a primary key is a unique ID that never gets reused, so you can always find one exact row.",
+    whyItMatters: "Almost every real application needs to persist structured data reliably — databases are the standard, battle-tested answer, and SQLite ships with Python already, no setup required.",
+    explanation: [
+      "A table has columns (fields) and rows (records); a primary key uniquely identifies each row; a foreign key links a row to a row in another table, modeling relationships.",
+      "Core SQL: SELECT reads data, INSERT adds it, UPDATE modifies it, DELETE removes it — WHERE filters which rows are affected, ORDER BY sorts results, GROUP BY aggregates by category.",
+      "Python's built-in sqlite3 module connects to a local database file with no separate server needed — perfect for learning and small applications.",
+      "Just like the SQL Injection lesson taught: always use parameterized queries (`?` placeholders) with real values, never build SQL strings with f-strings or concatenation.",
+      "A transaction groups multiple changes so they either all succeed or all fail together — important once an operation involves more than one related change."
+    ],
+    syntax: 'import sqlite3\nconn = sqlite3.connect("app.db")\ncursor = conn.cursor()\ncursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))\nconn.commit()',
+    example: 'import sqlite3\n\nconn = sqlite3.connect("app.db")\ncursor = conn.cursor()\ncursor.execute("CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY, text TEXT)")\ncursor.execute("INSERT INTO tasks (text) VALUES (?)", ("Buy milk",))\nconn.commit()\n\ncursor.execute("SELECT * FROM tasks")\nprint(cursor.fetchall())',
+    commonMistakes: [
+      "Building SQL queries with f-strings/concatenation instead of parameterized (?) placeholders — this is exactly the SQL injection vulnerability from the Ethical Hacking track.",
+      "Forgetting conn.commit() after INSERT/UPDATE/DELETE, so the changes never actually persist.",
+      "Not closing the connection (or not using a context manager) when done with the database."
+    ],
+    practice: {
+      prompt: "Write code using sqlite3 that creates a table called 'notes' with columns id (primary key) and text, if it doesn't already exist.",
+      starter: 'import sqlite3\nconn = sqlite3.connect("notes.db")\ncursor = conn.cursor()\n# your CREATE TABLE statement here\nconn.commit()',
+      hint: 'cursor.execute("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY, text TEXT)")'
+    },
+    challenge: {
+      prompt: "Write a parameterized INSERT statement that safely adds a new note (using a variable, not string concatenation), followed by a SELECT that retrieves all notes."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why use parameterized queries (with ? placeholders) instead of building SQL with f-strings?",
+        options: ["They're shorter to type", "They prevent user input from being interpreted as SQL code — the same fix taught for SQL injection", "f-strings don't work with sqlite3", "There's no real difference"],
+        answer: 1,
+        explain: "Parameterized queries keep values strictly separate from query structure, which is the structural fix for SQL injection."
+      }
+    ]
+  },
+  {
+    id: "l-flask",
+    levelId: "lvl16",
+    title: "Building a Backend with Flask",
+    difficulty: "Hard",
+    minutes: 18,
+    prereq: ["l-databases"],
+    concept: "Flask is a lightweight Python web framework — you define routes (URLs) and Python functions that run when a request hits them, returning a response.",
+    analogy: "A Flask app is like a receptionist with a list of extensions: a request comes in for a specific URL ('route'), and Flask connects it to the exact function ('view') responsible for handling it.",
+    whyItMatters: "This is where everything else in Python Development comes together — routes, request handling, databases, and configuration combine into an actual running application other people can use.",
+    explanation: [
+      "`@app.route(\"/path\")` decorates a function, telling Flask which URL should trigger it; the function's return value becomes the HTTP response.",
+      "Route parameters (`/users/<int:user_id>`) let a single route handle many URLs, capturing part of the path as a variable.",
+      "`request.args` reads query parameters; `request.get_json()` or `request.form` reads submitted data, depending on how it was sent.",
+      "Returning a dict from a route (with `jsonify` or Flask's automatic JSON conversion) is how you build a simple REST API instead of an HTML page.",
+      "Never hardcode secrets (like a secret key or database URL) in a Flask app — load them from environment variables, exactly like the Secure Python and APIs lessons taught."
+    ],
+    syntax: 'from flask import Flask, jsonify\napp = Flask(__name__)\n\n@app.route("/api/tasks")\ndef get_tasks():\n    return jsonify(tasks)',
+    example: 'from flask import Flask, jsonify, request\n\napp = Flask(__name__)\ntasks = [{"id": 1, "text": "Learn Flask"}]\n\n@app.route("/api/tasks")\ndef get_tasks():\n    return jsonify(tasks)\n\n@app.route("/api/tasks/<int:task_id>")\ndef get_task(task_id):\n    task = next((t for t in tasks if t["id"] == task_id), None)\n    return jsonify(task) if task else ({"error": "not found"}, 404)',
+    commonMistakes: [
+      "Forgetting that a route function must return something — Flask needs a return value to build the response.",
+      "Hardcoding a secret key or database credentials directly in the Flask app file.",
+      "Not returning an appropriate error status code (like 404) when something isn't found, leaving the client unable to distinguish success from failure."
+    ],
+    practice: {
+      prompt: "Write a Flask route /api/hello that returns a JSON response like {\"message\": \"Hello, world!\"}.",
+      starter: 'from flask import Flask, jsonify\napp = Flask(__name__)\n\n# your route here\n\nif __name__ == "__main__":\n    app.run(debug=True)',
+      hint: '@app.route("/api/hello") above a function that returns jsonify({"message": "Hello, world!"})'
+    },
+    challenge: {
+      prompt: "Extend the get_tasks/get_task example with a POST route /api/tasks that accepts JSON and appends a new task to the list, returning the created task."
+    },
+    knowledgeCheck: [
+      {
+        q: "What does @app.route(\"/users/<int:user_id>\") let a single Flask function do?",
+        options: ["Nothing special", "Handle requests for any URL matching that pattern, capturing the ID as a variable", "Only accept POST requests", "Automatically create a database table"],
+        answer: 1,
+        explain: "Route parameters let one view function serve many URLs, with the matched segment passed in as an argument."
+      }
+    ]
+  },
+  {
+    id: "l-tkinter",
+    levelId: "lvl17",
+    title: "Desktop GUIs with Tkinter",
+    difficulty: "Medium",
+    minutes: 16,
+    prereq: ["l-flask"],
+    concept: "Tkinter builds windowed desktop applications — instead of a command-line prompt, users interact with buttons, text fields, and labels.",
+    analogy: "If a CLI program is a conversation over the phone (one line at a time), a Tkinter GUI is a form you fill out in person — everything visible and clickable at once.",
+    whyItMatters: "Many real users expect a graphical interface, not a terminal — Tkinter, included with Python, is the fastest path from 'my script works' to 'an application anyone can use'.",
+    explanation: [
+      "A Tkinter app starts with a root window (`tk.Tk()`), then adds widgets (Label, Button, Entry, Text) to it, then calls `.mainloop()` to start listening for user interaction.",
+      "Widgets need a layout manager to actually appear — `.pack()` is the simplest, stacking widgets top-to-bottom (or side-by-side) automatically.",
+      "A button's `command=` parameter takes a function (a callback) to run when clicked — this is how user actions trigger your code.",
+      "For anything beyond a trivial app, organize widgets into functions or even a class, rather than one long flat script — the same separation-of-concerns principle from Python Development applies to GUI code too.",
+      "Reading an Entry widget's value with `.get()` and validating it before using it follows the same input-validation habits taught throughout this course."
+    ],
+    syntax: 'import tkinter as tk\nroot = tk.Tk()\nlabel = tk.Label(root, text="Hello")\nlabel.pack()\nroot.mainloop()',
+    example: 'import tkinter as tk\n\ndef on_click():\n    name = entry.get()\n    label.config(text=f"Hello, {name}!")\n\nroot = tk.Tk()\nentry = tk.Entry(root)\nentry.pack()\nbutton = tk.Button(root, text="Greet", command=on_click)\nbutton.pack()\nlabel = tk.Label(root, text="")\nlabel.pack()\nroot.mainloop()',
+    commonMistakes: [
+      "Forgetting root.mainloop() at the end, so the window never actually appears or responds to events.",
+      "Passing a function call (on_click()) instead of a reference (on_click) to command= — this runs it immediately instead of on click.",
+      "Building a large GUI as one long flat script instead of organizing related widgets/logic into functions."
+    ],
+    practice: {
+      prompt: "Write a minimal Tkinter app with one Label showing 'Hello, Tkinter!' and nothing else.",
+      starter: 'import tkinter as tk\nroot = tk.Tk()\n# your code here\nroot.mainloop()',
+      hint: "Create a tk.Label(root, text=\"...\") and call .pack() on it before mainloop()."
+    },
+    challenge: {
+      prompt: "Extend the example app so the Entry field is cleared automatically right after the Greet button is clicked."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why does a Button's command need to be passed as `command=on_click` rather than `command=on_click()`?",
+        options: ["Both are exactly equivalent", "on_click() calls the function immediately while building the button; command=on_click passes a reference to call later, on click", "Parentheses are required", "Tkinter doesn't support functions with parentheses"],
+        answer: 1,
+        explain: "command= needs a callable reference to invoke later — calling it immediately (with parentheses) runs it once during setup instead of on each click."
+      }
+    ]
+  },
+  {
+    id: "l-deployment",
+    levelId: "lvl18",
+    title: "Deploying a Python Project",
+    difficulty: "Hard",
+    minutes: 16,
+    prereq: ["l-tkinter"],
+    concept: "Deployment is the process of taking a project from 'runs on my machine' to 'runs reliably somewhere others can actually use it'.",
+    analogy: "Development is like cooking in your own kitchen; deployment is opening a restaurant — the recipe needs to work consistently, for strangers, without you standing there to fix things live.",
+    whyItMatters: "A project that only ever runs on your machine hasn't really shipped — understanding what changes between development and production is what makes a project genuinely usable by others.",
+    explanation: [
+      "Development environments are forgiving (debug mode, verbose errors); production environments should not leak stack traces or secrets to end users, and should log errors somewhere you can actually review them.",
+      "A pinned requirements.txt (or pyproject.toml) is essential so the deployed environment installs the exact same dependency versions you tested with.",
+      "Configuration and secrets (database URLs, API keys, a Flask secret key) belong in environment variables set on the hosting platform — never committed to the repository, exactly as taught in Secure Python and APIs.",
+      "Hosting concepts: your code needs to run somewhere reachable — that could be a traditional server, a managed platform that runs your app for you, or a container — the mechanics vary, but 'don't hardcode config, keep dependencies pinned, don't leak secrets' applies everywhere.",
+      "This platform doesn't perform real deployments — the goal here is understanding the concepts and preparation steps clearly enough to follow a real hosting provider's specific instructions confidently when you get there."
+    ],
+    syntax: "pip freeze > requirements.txt\n# On the host: read config from environment variables, never hardcode",
+    example: '# A production-ready config pattern (illustrative):\nimport os\n\nDEBUG = os.environ.get("DEBUG", "false").lower() == "true"\nDATABASE_URL = os.environ.get("DATABASE_URL")\nSECRET_KEY = os.environ.get("SECRET_KEY")\n\nif not SECRET_KEY:\n    raise RuntimeError("SECRET_KEY environment variable is required in production")',
+    commonMistakes: [
+      "Deploying with debug mode still enabled, which can leak sensitive internal details in error pages.",
+      "Committing a .env file or hardcoded secrets to the repository instead of configuring them on the host.",
+      "Not pinning dependency versions, so the deployed environment silently installs different (possibly incompatible) versions than what was tested."
+    ],
+    practice: {
+      prompt: "Write the config pattern from the example, but for a DATABASE_URL — read it from an environment variable and raise a clear error if it's missing.",
+      starter: 'import os\n\n# your code here',
+      hint: 'DATABASE_URL = os.environ.get("DATABASE_URL")\nif not DATABASE_URL: raise RuntimeError(...)'
+    },
+    challenge: {
+      prompt: "List, as comments, three specific things that should differ between your development configuration and your production configuration for a Flask app."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why is pinning exact dependency versions in requirements.txt important for deployment?",
+        options: ["It makes the code run faster", "It ensures the deployed environment installs the same versions you actually tested with, avoiding surprise incompatibilities", "It's required by Python syntax", "It has no real effect"],
+        answer: 1,
+        explain: "Unpinned dependencies can silently resolve to newer versions in production than what you developed and tested against."
+      }
+    ]
+  },
+
+  /* ---- Python Core depth pass: Automation ---- */
+  {
+    id: "l-automation-data",
+    levelId: "lvl12",
+    title: "Structured Data Automation (JSON & CSV)",
+    difficulty: "Medium",
+    minutes: 15,
+    prereq: ["l-automation"],
+    concept: "Most real automation tasks aren't just moving files around — they're reading structured data in, transforming it, and writing structured data back out.",
+    analogy: "If file automation is rearranging furniture, structured data automation is actually reading the labels on the boxes and sorting their contents — the data itself, not just the containers.",
+    whyItMatters: "JSON and CSV are the two formats you'll automate around constantly — config files, exported reports, API caches, spreadsheets handed to you by someone else.",
+    explanation: [
+      "`json.load(f)` / `json.dump(data, f)` round-trip Python dicts/lists to JSON files; `json.dumps(data, indent=2)` gives readable formatted output for logs or debugging.",
+      "`csv.DictReader`/`csv.DictWriter` read/write CSV rows as dictionaries keyed by header, which is usually easier to work with than raw index-based rows.",
+      "`datetime.now()` and `datetime.strftime(...)` are the core tools for timestamping automation output — like naming a backup file with today's date.",
+      "A common automation pattern: read structured input, apply a transformation (filter, reformat, aggregate), write structured output — the same three-step shape regardless of the specific task."
+    ],
+    syntax: "import csv, json\nfrom datetime import datetime\n\nwith open(\"data.csv\") as f:\n    rows = list(csv.DictReader(f))\ndatetime.now().strftime(\"%Y-%m-%d\")",
+    example: 'import csv\nfrom datetime import datetime\n\ndef summarize_csv(path):\n    with open(path) as f:\n        rows = list(csv.DictReader(f))\n    total = sum(float(r["amount"]) for r in rows)\n    timestamp = datetime.now().strftime("%Y-%m-%d")\n    return {"date": timestamp, "row_count": len(rows), "total": total}',
+    commonMistakes: [
+      "Forgetting CSV values are always read as strings — converting to float/int explicitly is required before doing math.",
+      "Not handling a missing or malformed field in some rows, crashing the whole batch instead of skipping or flagging that row.",
+      "Overwriting an existing output file without a timestamp or backup, losing the previous run's result."
+    ],
+    practice: {
+      prompt: "Write a function that reads a CSV of rows with an 'amount' column and returns the total as a float, using csv.DictReader.",
+      starter: 'import csv\n\ndef total_amount(path):\n    # your code here\n    pass',
+      hint: "csv.DictReader(f) gives you an iterable of dicts; sum(float(r['amount']) for r in rows) does the rest."
+    },
+    challenge: {
+      prompt: "Write a function that reads a list of dicts and writes them to a timestamped JSON file, e.g. report_2026-01-01.json, using datetime for the filename."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why do CSV values always need explicit type conversion (like float()) before doing math on them?",
+        options: ["CSV files can't store numbers", "Every value read from a CSV file is a string by default, regardless of how it looks", "Python requires this for all files", "It's not actually necessary"],
+        answer: 1,
+        explain: "csv.DictReader (and csv.reader) always returns string values — converting to the right type is the caller's responsibility."
+      }
+    ]
+  },
+  {
+    id: "l-automation-robust",
+    levelId: "lvl12",
+    title: "Automation Error Handling & Logging",
+    difficulty: "Medium",
+    minutes: 15,
+    prereq: ["l-automation-data"],
+    concept: "A script you run once and watch is forgiving of small bugs. A script meant to run unattended — on a schedule, or on someone else's machine — needs to handle failure gracefully and leave a trail of what happened.",
+    analogy: "An unattended automation script is like a house-sitter: if something goes wrong, you want a note explaining what happened, not silence and a mess.",
+    whyItMatters: "This is what separates a personal script from something you'd actually trust to run automatically every night without you watching it.",
+    explanation: [
+      "`subprocess.run([...], capture_output=True, text=True)` runs another program and captures its output — check `.returncode` (0 usually means success) before trusting it worked.",
+      "The `logging` module replaces scattered print() calls with leveled, timestamped messages (`logging.info(...)`, `logging.warning(...)`, `logging.error(...)`) that can be redirected to a file.",
+      "Wrap risky steps (file operations, subprocess calls, network requests) in try/except and log the failure clearly rather than letting the whole script crash silently or with an unreadable traceback.",
+      "'Scheduled automation' just means an OS-level tool (cron, Task Scheduler) runs your script at set times — the script itself doesn't need special code for this, just reliable error handling since no one's watching it run.",
+      "Environment variables are still the right place for any path, credential, or setting an automation script needs, so it can run identically across different machines."
+    ],
+    syntax: "import logging\nlogging.basicConfig(filename=\"automation.log\", level=logging.INFO)\nlogging.info(\"Started task\")\nlogging.error(\"Task failed: %s\", error)",
+    example: 'import logging\nimport subprocess\n\nlogging.basicConfig(filename="automation.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")\n\ndef run_backup(source, dest):\n    try:\n        result = subprocess.run(["cp", "-r", source, dest], capture_output=True, text=True)\n        if result.returncode == 0:\n            logging.info(f"Backup succeeded: {source} -> {dest}")\n        else:\n            logging.error(f"Backup failed: {result.stderr}")\n    except Exception as e:\n        logging.error(f"Unexpected error during backup: {e}")',
+    commonMistakes: [
+      "Using print() for an unattended script — nobody sees it, so the information is effectively lost.",
+      "Not checking subprocess.run()'s returncode, assuming the command succeeded just because it didn't raise a Python exception.",
+      "Catching every exception with a bare except and doing nothing with it, hiding real problems instead of logging them."
+    ],
+    practice: {
+      prompt: "Set up basic logging that writes INFO-level and above messages to a file called 'task.log', then log an info message 'Task started'.",
+      starter: "import logging\n# your setup here",
+      hint: "logging.basicConfig(filename='task.log', level=logging.INFO), then logging.info('Task started')."
+    },
+    challenge: {
+      prompt: "Write a function that wraps a file-copy operation in try/except, logging success or failure with logging instead of print."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why is the logging module generally preferred over print() for automation scripts?",
+        options: ["It's faster to type", "It supports severity levels and can be redirected to a file, useful for scripts nobody is watching run", "print() doesn't work in scripts", "There's no real difference"],
+        answer: 1,
+        explain: "Unattended scripts need a persistent, leveled record of what happened — exactly what logging provides and print() doesn't."
+      }
+    ]
+  },
+
+  /* ---- Python Core depth pass: Web Scraping ---- */
+  {
+    id: "l-scraping-advanced",
+    levelId: "lvl13",
+    title: "Scraping Tables, Links & Pagination",
+    difficulty: "Hard",
+    minutes: 16,
+    prereq: ["l-scraping"],
+    concept: "Real scraping targets usually involve more than one element — tables of data, lists of links, and content spread across multiple pages.",
+    analogy: "If basic scraping is picking one labeled item off a shelf, this lesson is emptying an entire aisle, row by row, and knowing when to walk to the next aisle (page).",
+    whyItMatters: "This is the shape of almost every practical scraping task — a handful of extra techniques turn a toy example into something that actually produces a usable dataset.",
+    explanation: [
+      "CSS selectors (`soup.select(\"div.item > h2\")`) are often more precise than find()/find_all() for targeting deeply nested or specifically-classed elements.",
+      "Scraping a table: loop over `<tr>` rows, and within each row loop over `<td>` cells — building one dict per row mirrors the CSV-reading pattern from the Automation section.",
+      "Pagination means following a 'next page' link or incrementing a page-number URL parameter in a loop, stopping when there's no next page or a request fails.",
+      "Always add a small delay (`time.sleep(1)`) between requests when scraping multiple pages, and set a `timeout=` on every request so a slow server can't hang your whole script.",
+      "Clean data before saving: strip whitespace, handle missing fields with a clear placeholder (not a crash), and validate that numeric-looking fields actually parse as numbers."
+    ],
+    syntax: 'import time\nfor row in soup.select("table tr"):\n    cells = row.select("td")\ntime.sleep(1)  # be polite between requests',
+    example: 'from bs4 import BeautifulSoup\n\nhtml = """\n<table>\n  <tr><td>Widget</td><td>$9.99</td></tr>\n  <tr><td>Gadget</td><td>$19.99</td></tr>\n</table>\n"""\nsoup = BeautifulSoup(html, "html.parser")\nrows = []\nfor tr in soup.select("table tr"):\n    cells = [td.text.strip() for td in tr.select("td")]\n    if cells:\n        rows.append({"name": cells[0], "price": cells[1]})\nprint(rows)',
+    commonMistakes: [
+      "Scraping every page in a paginated series with no delay, hammering the server with requests.",
+      "Assuming every row in a table has the exact expected number of cells — a header row or a malformed row can break naive indexing.",
+      "Not setting a stopping condition for pagination, causing an infinite loop if the 'next page' detection logic is wrong."
+    ],
+    practice: {
+      prompt: "Given the sample table HTML in the example, use BeautifulSoup with CSS selectors to extract a list of (name, price) tuples.",
+      starter: 'from bs4 import BeautifulSoup\n\nhtml = "<table><tr><td>Widget</td><td>$9.99</td></tr></table>"\n# your code here',
+      hint: "soup.select('table tr') then, for each row, row.select('td') gives you the cells."
+    },
+    challenge: {
+      prompt: "Write a loop that would scrape pages 1 through 3 of a paginated URL pattern like 'https://example.com/items?page=N', adding a 1-second delay between requests (you can just print the URL each iteration instead of actually requesting it)."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why add a delay between requests when scraping multiple pages in a loop?",
+        options: ["It makes the scraper run faster", "It avoids overwhelming the server with rapid-fire requests — basic scraping etiquette", "Python requires a delay between requests", "It has no real purpose"],
+        answer: 1,
+        explain: "A small delay is a simple, standard way to scrape responsibly without putting excessive load on the target server."
+      }
+    ]
+  },
+  {
+    id: "l-selenium",
+    levelId: "lvl13",
+    title: "Browser Automation with Selenium",
+    difficulty: "Hard",
+    minutes: 17,
+    prereq: ["l-scraping-advanced"],
+    concept: "Selenium drives a real browser under program control — useful when a page needs JavaScript to render, or when you need to actually interact with it (click, type, submit) rather than just read its HTML.",
+    analogy: "requests + BeautifulSoup is like reading a printed copy of a page; Selenium is like having a robot arm actually sitting at the keyboard, clicking and typing on the live page as it renders.",
+    whyItMatters: "Plenty of real sites and internal tools render content dynamically or require interaction — Selenium is the standard, legitimate way to automate that, on sites you're permitted to automate.",
+    explanation: [
+      "`webdriver.Chrome()` (or another browser driver) opens a real, controllable browser window; `.get(url)` navigates it to a page.",
+      "Elements are located with methods like `find_element(By.ID, \"...\")` or `find_element(By.CSS_SELECTOR, \"...\")`, then interacted with via `.click()`, `.send_keys(\"text\")`, or read via `.text`.",
+      "Pages often load content asynchronously — an explicit wait (`WebDriverWait(...).until(...)`) pauses until a specific element actually appears, instead of guessing with a fixed `time.sleep()`.",
+      "Always `.quit()` the driver when done, to close the browser and release resources — especially important in a script that runs repeatedly.",
+      "Only automate sites and workflows you're permitted to interact with programmatically — a login form you own for testing, a site's documented automation-friendly workflow, or a local test page. This lesson is about legitimate automation, not bypassing anything (like CAPTCHAs or access controls) a site has put in place."
+    ],
+    syntax: 'from selenium import webdriver\nfrom selenium.webdriver.common.by import By\n\ndriver = webdriver.Chrome()\ndriver.get(url)\nelement = driver.find_element(By.ID, "search")\nelement.send_keys("query")\ndriver.quit()',
+    example: '# Conceptual pattern — run only against sites/pages you\'re permitted to automate:\nfrom selenium import webdriver\nfrom selenium.webdriver.common.by import By\n\ndriver = webdriver.Chrome()\ntry:\n    driver.get("http://localhost:5000")\n    heading = driver.find_element(By.TAG_NAME, "h1")\n    print(heading.text)\nfinally:\n    driver.quit()',
+    commonMistakes: [
+      "Forgetting driver.quit(), leaving browser processes running and consuming resources after the script ends.",
+      "Using a fixed time.sleep() to 'wait for the page to load' instead of an explicit wait for the specific element you need — unreliable and either too slow or too fast.",
+      "Automating a site's login or workflow without permission, or in a way that circumvents access controls the site has in place."
+    ],
+    practice: {
+      prompt: "Write the Selenium code (conceptually, no need to run it) that opens a browser, navigates to 'http://localhost:5000', finds an element with id 'title', and prints its text — remembering to quit the driver.",
+      starter: "from selenium import webdriver\nfrom selenium.webdriver.common.by import By\n\n# your code here",
+      hint: "webdriver.Chrome() -> .get(url) -> find_element(By.ID, 'title') -> .text -> driver.quit()"
+    },
+    challenge: {
+      prompt: "Explain, in a few sentences, why an explicit wait for a specific element is more reliable than a fixed time.sleep() when a page loads content asynchronously."
+    },
+    knowledgeCheck: [
+      {
+        q: "What is the main reason to use Selenium instead of requests + BeautifulSoup for a particular page?",
+        options: ["Selenium is always faster", "The page requires JavaScript rendering or actual interaction (clicking, typing) that a plain HTML fetch can't provide", "requests doesn't support HTTPS", "There's no real difference between them"],
+        answer: 1,
+        explain: "Selenium drives a real browser, so it can handle JavaScript-rendered content and interactive workflows that a raw HTML request can't."
+      }
+    ]
+  },
+
+  /* ---- Python Core depth pass: APIs & REST ---- */
+  {
+    id: "l-rest-deep",
+    levelId: "lvl14",
+    title: "REST Concepts & HTTP Methods Deep Dive",
+    difficulty: "Medium",
+    minutes: 15,
+    prereq: ["l-apis"],
+    concept: "REST is a set of conventions for designing APIs around resources (like 'a task' or 'a user') and standard HTTP methods that act on them predictably.",
+    analogy: "A REST API is like a well-organized filing cabinet with labeled drawers (resources) and a consistent set of actions you can take on any drawer — look inside, add a file, replace a file, remove a file — rather than a different rulebook per drawer.",
+    whyItMatters: "Once you recognize the REST pattern, you can predict how almost any well-designed API works before even reading its documentation.",
+    explanation: [
+      "GET reads a resource without changing it; POST creates a new one; PUT typically replaces a resource entirely, PATCH updates part of it; DELETE removes it.",
+      "Path parameters identify a specific resource (`/tasks/42`); query parameters filter or modify a request (`/tasks?status=done`) — different jobs, easy to conflate.",
+      "A request body (usually JSON) carries the data for POST/PUT/PATCH — GET requests conventionally don't have one.",
+      "Pagination on list endpoints (`?page=2&limit=20`) and rate limits (a cap on requests per time window, often signaled via response headers) are common REST API conventions worth recognizing on sight.",
+      "Reading an API's documentation for its exact endpoint shapes, required parameters, and auth method is a core skill — no amount of REST theory replaces actually checking the docs for a specific API."
+    ],
+    syntax: "GET /tasks           # list\nGET /tasks/42         # read one\nPOST /tasks           # create\nPUT /tasks/42         # replace\nPATCH /tasks/42        # partial update\nDELETE /tasks/42      # remove",
+    example: 'import requests\n\n# GET with a query parameter (filtering, not identifying a resource)\nresponse = requests.get("https://api.example.com/tasks", params={"status": "done"})\n\n# POST with a JSON body (creating a resource)\nresponse = requests.post("https://api.example.com/tasks", json={"title": "Learn REST"})',
+    commonMistakes: [
+      "Confusing PUT (replace the whole resource) with PATCH (update part of it) — using the wrong one can silently wipe fields you didn't mean to touch.",
+      "Putting resource-identifying information in a query parameter instead of the URL path, or the reverse.",
+      "Assuming an API's behavior instead of checking its actual documentation for the specific endpoint shape."
+    ],
+    practice: {
+      prompt: "For each action, name the correct HTTP method: (1) fetch a list of products, (2) create a new order, (3) delete a specific comment by ID.",
+      starter: "# 1.\n# 2.\n# 3.",
+      hint: "GET for reading, POST for creating, DELETE for removing."
+    },
+    challenge: {
+      prompt: "Explain, with a concrete example, the difference between a path parameter and a query parameter in a REST API request."
+    },
+    knowledgeCheck: [
+      {
+        q: "What's the key difference between PUT and PATCH?",
+        options: ["They're identical", "PUT typically replaces the whole resource; PATCH updates only part of it", "PATCH is only for images", "PUT is read-only"],
+        answer: 1,
+        explain: "PUT implies a full replacement of the resource's representation; PATCH implies a partial update, leaving other fields untouched."
+      }
+    ]
+  },
+  {
+    id: "l-api-client-robust",
+    levelId: "lvl14",
+    title: "Building a Robust API Client",
+    difficulty: "Hard",
+    minutes: 16,
+    prereq: ["l-rest-deep"],
+    concept: "A production-quality API client anticipates failure — timeouts, rate limits, and transient errors — instead of assuming every request will simply succeed.",
+    analogy: "A naive API client is a phone call with no voicemail: if the line's busy, the call just fails. A robust client leaves a message and tries again shortly after.",
+    whyItMatters: "This is the difference between a fragile script that breaks the first time a network hiccups, and a tool you'd actually trust to run unattended.",
+    explanation: [
+      "Always set a `timeout=` on every request — an API that hangs forever will otherwise hang your entire program.",
+      "A simple retry pattern: catch a request exception or a 5xx status code, wait briefly, and try again a limited number of times before giving up and reporting failure clearly.",
+      "Authentication commonly uses an API key (often in a header: `headers={\"Authorization\": f\"Bearer {token}\"}`) — read it from an environment variable, never hardcode it, consistent with every prior secure-coding lesson.",
+      "Rate limits are often signaled in response headers (like `X-RateLimit-Remaining`) — a well-behaved client checks these and slows down before being blocked outright, rather than hitting the limit repeatedly.",
+      "Wrapping repeated API-calling logic in a small reusable function or class (rather than copy-pasting the same requests.get() call everywhere) is the same separation-of-concerns principle from Python Development, applied here."
+    ],
+    syntax: 'headers = {"Authorization": f"Bearer {token}"}\nresponse = requests.get(url, headers=headers, timeout=5)',
+    example: 'import os\nimport time\nimport requests\n\ndef get_with_retry(url, retries=3, delay=1):\n    token = os.environ.get("API_TOKEN")\n    headers = {"Authorization": f"Bearer {token}"} if token else {}\n    for attempt in range(retries):\n        try:\n            response = requests.get(url, headers=headers, timeout=5)\n            if response.status_code == 200:\n                return response.json()\n            if response.status_code >= 500:\n                time.sleep(delay)\n                continue\n            return None  # a 4xx error won\'t be fixed by retrying\n        except requests.exceptions.RequestException:\n            time.sleep(delay)\n    return None',
+    commonMistakes: [
+      "Retrying on every kind of failure, including 4xx client errors (like 404) that a retry will never fix.",
+      "Retrying immediately with no delay, potentially making a rate-limit problem worse instead of better.",
+      "Hardcoding an API token directly in the client function instead of reading it from an environment variable."
+    ],
+    practice: {
+      prompt: "Explain, in a comment, why retrying makes sense for a 500 (server error) response but not for a 404 (not found) response.",
+      starter: "# Your explanation here",
+      hint: "A 500 might be a transient server problem that clears up; a 404 means the resource genuinely doesn't exist at that URL, which retrying won't change."
+    },
+    challenge: {
+      prompt: "Extend the get_with_retry example so it also handles a 429 (Too Many Requests) status by waiting longer before retrying."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why should a retry loop generally skip retrying on a 404 status code?",
+        options: ["404s should always be retried", "A 404 means the resource doesn't exist — retrying the same request won't change that", "404 is not a real status code", "Retrying always fixes 404s"],
+        answer: 1,
+        explain: "Retries help with transient problems (server hiccups, rate limits); a 404 is a stable fact about the request, not something that resolves itself."
+      }
+    ]
+  },
+
+  /* ---- Python Core depth pass: Databases ---- */
+  {
+    id: "l-db-design",
+    levelId: "lvl15",
+    title: "Database Design & Relationships",
+    difficulty: "Hard",
+    minutes: 17,
+    prereq: ["l-databases"],
+    concept: "Good schema design — deciding what tables exist and how they relate — determines whether a database stays easy to work with as an application grows, or turns into a tangle of duplicated, inconsistent data.",
+    analogy: "A well-designed schema is like a well-organized filing system where each fact lives in exactly one place; a poorly designed one is like writing someone's address on every single letter you file about them — update it once, and now half your records are wrong.",
+    whyItMatters: "This is the difference between a database that scales cleanly with an application and one that becomes a constant source of bugs and inconsistent data.",
+    explanation: [
+      "Normalization, at a practical level, means not repeating the same fact in multiple rows/tables — instead, store it once and reference it via a foreign key.",
+      "A foreign key is a column in one table that refers to a primary key in another, modeling a relationship — e.g. each row in an `orders` table has a `customer_id` referencing the `customers` table.",
+      "A JOIN combines rows from two related tables based on that relationship — e.g. listing each order alongside its customer's name, without duplicating the customer's full details in every order row.",
+      "An index, conceptually, is a lookup structure a database builds on a column to make searches on it much faster — a tradeoff, since indexes speed up reads but slightly slow down writes.",
+      "A migration is a versioned, repeatable set of schema changes (adding a column, creating a table) — the practical habit worth knowing about even before using a migration tool: never change a shared database's schema by hand and undocumented."
+    ],
+    syntax: "SELECT orders.id, customers.name\nFROM orders\nJOIN customers ON orders.customer_id = customers.id;",
+    example: 'import sqlite3\n\nconn = sqlite3.connect("shop.db")\nconn.execute("CREATE TABLE IF NOT EXISTS customers (id INTEGER PRIMARY KEY, name TEXT)")\nconn.execute("CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY, customer_id INTEGER, total REAL, FOREIGN KEY (customer_id) REFERENCES customers(id))")\n\ncursor = conn.execute("""\n    SELECT orders.id, customers.name, orders.total\n    FROM orders JOIN customers ON orders.customer_id = customers.id\n""")\nprint(cursor.fetchall())',
+    commonMistakes: [
+      "Storing a customer's full name and address directly on every order row instead of referencing the customers table — any update now requires fixing many rows.",
+      "Forgetting to define the foreign key relationship, leaving orphaned rows possible (an order pointing to a customer_id that doesn't exist).",
+      "Adding an index to every column 'just in case' — indexes aren't free; they speed up reads but add overhead to every write."
+    ],
+    practice: {
+      prompt: "Write the CREATE TABLE statements for two related tables: authors (id, name) and books (id, title, author_id), with books.author_id as a foreign key referencing authors.id.",
+      starter: "import sqlite3\nconn = sqlite3.connect(\"library.db\")\n# your CREATE TABLE statements here",
+      hint: "FOREIGN KEY (author_id) REFERENCES authors(id) inside the books table definition."
+    },
+    challenge: {
+      prompt: "Write a JOIN query that lists each book's title alongside its author's name from the authors/books tables in the practice exercise."
+    },
+    knowledgeCheck: [
+      {
+        q: "What problem does normalizing data (storing a fact once, referenced by foreign key) primarily solve?",
+        options: ["It makes queries slower on purpose", "It avoids duplicated, inconsistent data that's hard to keep in sync across many rows", "It's required by SQLite specifically", "It has no practical benefit"],
+        answer: 1,
+        explain: "Storing a fact in one place and referencing it means updating it once, instead of hunting down every duplicate copy."
+      }
+    ]
+  },
+  {
+    id: "l-db-transactions",
+    levelId: "lvl15",
+    title: "Transactions & PostgreSQL Concepts",
+    difficulty: "Hard",
+    minutes: 15,
+    prereq: ["l-db-design"],
+    concept: "A transaction groups multiple database changes so they either all succeed together or all fail together — critical whenever a single logical operation touches more than one row or table.",
+    analogy: "A bank transfer is the classic example: money leaves one account and arrives in another — a transaction guarantees you never end up in the broken state where it left one account but never arrived in the other.",
+    whyItMatters: "Without transactions, a crash or error halfway through a multi-step database operation can leave your data in an inconsistent, hard-to-fix state.",
+    explanation: [
+      "In Python's sqlite3, a transaction is implicit — changes aren't visible to other connections until `conn.commit()`; `conn.rollback()` discards uncommitted changes if something goes wrong.",
+      "The typical pattern: begin the related changes, and if any step raises an exception, roll back everything instead of committing a half-finished operation.",
+      "SQLite is great for learning and small/local applications; PostgreSQL is the natural next step for anything needing multiple simultaneous users, stronger data types, or larger scale — the SQL you already know carries over almost directly.",
+      "Connecting to PostgreSQL from Python typically uses a library like psycopg2, with a connection string instead of a local file path — the query syntax and parameterized-query safety principles you already learned stay the same.",
+      "For this course, use a safe local PostgreSQL setup (or just continue with SQLite) rather than any shared production database — the concepts transfer either way."
+    ],
+    syntax: "try:\n    conn.execute(\"UPDATE accounts SET balance = balance - ? WHERE id = ?\", (amount, from_id))\n    conn.execute(\"UPDATE accounts SET balance = balance + ? WHERE id = ?\", (amount, to_id))\n    conn.commit()\nexcept Exception:\n    conn.rollback()\n    raise",
+    example: 'import sqlite3\n\ndef transfer(conn, from_id, to_id, amount):\n    try:\n        conn.execute("UPDATE accounts SET balance = balance - ? WHERE id = ?", (amount, from_id))\n        conn.execute("UPDATE accounts SET balance = balance + ? WHERE id = ?", (amount, to_id))\n        conn.commit()\n    except Exception as e:\n        conn.rollback()\n        print(f"Transfer failed, rolled back: {e}")',
+    commonMistakes: [
+      "Committing after each individual UPDATE instead of the whole related group, risking a half-finished operation if a later step fails.",
+      "Not wrapping multi-step database changes in try/except with a rollback on failure.",
+      "Assuming PostgreSQL requires completely different code — the SQL and parameterized-query patterns you already know carry over almost unchanged."
+    ],
+    practice: {
+      prompt: "Given the transfer() function in the example, explain in a comment what would go wrong if conn.commit() were called after each individual UPDATE instead of once at the end.",
+      starter: "# Your explanation here",
+      hint: "If the second UPDATE fails after the first already committed, the money would vanish from one account without arriving in the other."
+    },
+    challenge: {
+      prompt: "Write a function that inserts a new order and updates the corresponding product's stock count in one transaction, rolling back both changes if either step fails."
+    },
+    knowledgeCheck: [
+      {
+        q: "What does conn.rollback() do?",
+        options: ["Permanently deletes the database", "Discards any uncommitted changes made in the current transaction", "Undoes the last committed change", "Restarts the database connection"],
+        answer: 1,
+        explain: "rollback() reverts uncommitted changes, restoring the state to before the transaction began — the safety net that makes multi-step operations safe."
+      }
+    ]
+  },
+
+  /* ---- Python Core depth pass: Web Backend ---- */
+  {
+    id: "l-flask-templates",
+    levelId: "lvl16",
+    title: "Flask Templates & Forms",
+    difficulty: "Hard",
+    minutes: 16,
+    prereq: ["l-flask"],
+    concept: "Templates let a Flask route return actual HTML pages built from Python data, instead of only raw JSON — Jinja is the templating language Flask uses to do this.",
+    analogy: "A Jinja template is like a form letter: fixed wording with blanks (`{{ variable }}`) that get filled in differently each time it's rendered.",
+    whyItMatters: "This is how Flask serves real web pages, not just API responses — the natural next step once your API-building lesson's routes work.",
+    explanation: [
+      "`render_template(\"page.html\", name=value)` renders an HTML file from the templates/ folder, passing Python variables in for Jinja to insert.",
+      "Jinja syntax: `{{ variable }}` inserts a value; `{% for item in items %}...{% endfor %}` and `{% if condition %}...{% endif %}` handle loops and conditionals right inside the HTML.",
+      "Jinja automatically escapes inserted values by default, which is an important defense against the XSS vulnerability covered in the Ethical Hacking track — avoid disabling this unless you specifically understand why.",
+      "Reading form data: `request.form[\"field_name\"]` for a standard HTML form submission (POST) — always validate it server-side before using it, the same input-validation habit from Secure Python.",
+      "Static files (CSS, images, JS) live in a static/ folder and are served automatically at the /static/ URL prefix."
+    ],
+    syntax: 'from flask import render_template, request\n\n@app.route("/greet", methods=["GET", "POST"])\ndef greet():\n    if request.method == "POST":\n        name = request.form["name"]\n        return render_template("greeting.html", name=name)\n    return render_template("form.html")',
+    example: '# app.py\nfrom flask import Flask, render_template, request\napp = Flask(__name__)\n\n@app.route("/greet", methods=["GET", "POST"])\ndef greet():\n    if request.method == "POST":\n        name = request.form.get("name", "").strip()\n        if not name:\n            return render_template("form.html", error="Name is required")\n        return render_template("greeting.html", name=name)\n    return render_template("form.html")\n\n# templates/greeting.html would contain: <h1>Hello, {{ name }}!</h1>',
+    commonMistakes: [
+      "Reading request.form without checking the field exists first, causing a KeyError on a malformed submission — request.form.get() with a default is safer.",
+      "Trusting form data without validating it server-side, since a client can submit anything regardless of any frontend validation.",
+      "Disabling Jinja's automatic escaping without understanding this reintroduces the XSS risk it was preventing."
+    ],
+    practice: {
+      prompt: "Write a Flask route /welcome that reads a 'username' query parameter with request.args.get() and passes it to render_template as 'name'.",
+      starter: 'from flask import Flask, render_template, request\napp = Flask(__name__)\n\n# your route here',
+      hint: 'request.args.get("username", "Guest") reads a query parameter with a fallback default.'
+    },
+    challenge: {
+      prompt: "Extend the greet() example so it validates the name is at least 2 characters, showing an error message via the template if not."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why does Jinja's automatic escaping of {{ variable }} values matter for security?",
+        options: ["It has no security purpose", "It prevents user-supplied content from being interpreted as executable HTML/JavaScript — the core defense against XSS", "It only affects page load speed", "It's unrelated to any vulnerability"],
+        answer: 1,
+        explain: "Automatic escaping converts special characters so injected markup renders as inert text, directly defending against XSS."
+      }
+    ]
+  },
+  {
+    id: "l-flask-security",
+    levelId: "lvl16",
+    title: "Flask, Databases, Sessions & Security",
+    difficulty: "Hard",
+    minutes: 18,
+    prereq: ["l-flask-templates"],
+    concept: "A real Flask backend combines routes with a database, tracks logged-in users with sessions, and applies the same secure-coding principles taught throughout this course — nothing here is a new set of rules, just applying familiar ones together.",
+    analogy: "A session is like a coat-check ticket: the server doesn't need to re-verify your entire identity on every single request — it just checks the ticket (a signed cookie) matches a claim it issued earlier.",
+    whyItMatters: "This is where APIs, Databases, and Secure Python converge into what a real backend application actually looks like.",
+    explanation: [
+      "Connect a Flask route to SQLite using the exact same sqlite3 patterns from the Databases section — parameterized queries, commit after writes, no exceptions to that rule just because it's now inside a web framework.",
+      "Flask sessions (`session[\"user_id\"] = user.id`) store small amounts of data in a signed cookie — signed so the client can't tamper with it, but not encrypted, so never store secrets in it directly.",
+      "Never store a plain-text password — hash it with a purpose-built algorithm (Flask commonly pairs with `werkzeug.security`'s `generate_password_hash`/`check_password_hash`) before storing, consistent with the Cryptography lesson.",
+      "Authorization means checking not just 'is someone logged in' (authentication) but 'is this specific user allowed to do this specific thing' — e.g. a user editing only their own data, not anyone else's by guessing an ID in the URL.",
+      "CORS (Cross-Origin Resource Sharing) controls which other websites' frontend JavaScript is allowed to call your API — worth knowing exists, configured deliberately and narrowly rather than left wide open."
+    ],
+    syntax: 'from werkzeug.security import generate_password_hash, check_password_hash\nhashed = generate_password_hash(password)\ncheck_password_hash(hashed, entered_password)',
+    example: 'from flask import Flask, session, request\nfrom werkzeug.security import generate_password_hash, check_password_hash\n\napp = Flask(__name__)\napp.secret_key = "read-from-env-in-real-apps"  # illustrative only\n\n@app.route("/signup", methods=["POST"])\ndef signup():\n    password = request.form["password"]\n    hashed = generate_password_hash(password)\n    # store hashed (never the raw password) in the database\n    return {"status": "created"}\n\n@app.route("/login", methods=["POST"])\ndef login():\n    stored_hash = "..."  # looked up from the database\n    if check_password_hash(stored_hash, request.form["password"]):\n        session["user_id"] = 1\n        return {"status": "logged in"}\n    return {"status": "invalid credentials"}, 401',
+    commonMistakes: [
+      "Storing a plain-text password anywhere, even 'temporarily' — hash it before it ever touches storage.",
+      "Checking only authentication (is anyone logged in) and forgetting authorization (is THIS user allowed to touch THIS specific resource).",
+      "Hardcoding app.secret_key instead of reading it from an environment variable in a real deployment."
+    ],
+    practice: {
+      prompt: "Using werkzeug.security, write code that hashes the password 'hunter2' and then verifies a (correct) attempt against that hash.",
+      starter: 'from werkzeug.security import generate_password_hash, check_password_hash\n\n# your code here',
+      hint: "generate_password_hash('hunter2') then check_password_hash(hashed, 'hunter2')."
+    },
+    challenge: {
+      prompt: "Write a route /profile/<int:user_id> that only returns the profile data if session['user_id'] matches the requested user_id, returning a 403 error otherwise — demonstrating authorization, not just authentication."
+    },
+    knowledgeCheck: [
+      {
+        q: "What's the difference between authentication and authorization in this Flask context?",
+        options: ["They're the same thing", "Authentication confirms who is logged in; authorization checks whether that specific user is allowed to do a specific action", "Authorization happens before authentication always", "Only authentication matters for security"],
+        answer: 1,
+        explain: "Authentication verifies identity; authorization is the separate check for whether that identity has permission for a specific action — both are needed."
+      }
+    ]
+  },
+
+  /* ---- Python Core depth pass: GUI Development ---- */
+  {
+    id: "l-tkinter-layout",
+    levelId: "lvl17",
+    title: "Layouts & Forms in Tkinter",
+    difficulty: "Medium",
+    minutes: 15,
+    prereq: ["l-tkinter"],
+    concept: "Tkinter offers three different layout managers, and Frames let you group related widgets — together, these are what turn a single stacked column of widgets into an actual, organized form.",
+    analogy: "pack() is like stacking boxes in a hallway one after another; grid() is like placing items into a spreadsheet's rows and columns; place() is pinning something at an exact pixel position, like a sticker on a wall.",
+    whyItMatters: "Real applications need more than one widget stacked vertically — proper layout is what makes a GUI look and behave like an actual application instead of a quick demo.",
+    explanation: [
+      "`.pack()` stacks widgets in a given direction (top-to-bottom by default); simple but limited for anything beyond a single column or row.",
+      "`.grid(row=, column=)` places widgets into a row/column grid — the standard choice for forms, since labels and inputs naturally align into rows.",
+      "`.place(x=, y=)` positions a widget at exact coordinates — rarely the right default choice, since it doesn't adapt to window resizing.",
+      "A `Frame` is an invisible container widget used to group related widgets together (like one form section) and lay them out independently from the rest of the window.",
+      "Never mix pack() and grid() within the same parent container — Tkinter doesn't support combining them there, though nested Frames each using a different manager is fine."
+    ],
+    syntax: "widget.grid(row=0, column=0)\nframe = tk.Frame(root)\nframe.pack()",
+    example: 'import tkinter as tk\n\nroot = tk.Tk()\nform = tk.Frame(root)\nform.pack(padx=10, pady=10)\n\ntk.Label(form, text="Name:").grid(row=0, column=0, sticky="w")\ntk.Entry(form).grid(row=0, column=1)\n\ntk.Label(form, text="Email:").grid(row=1, column=0, sticky="w")\ntk.Entry(form).grid(row=1, column=1)\n\ntk.Button(form, text="Submit").grid(row=2, column=0, columnspan=2)\nroot.mainloop()',
+    commonMistakes: [
+      "Mixing pack() and grid() calls on widgets sharing the same direct parent, which Tkinter doesn't allow.",
+      "Using place() with hardcoded pixel coordinates for a form, which breaks as soon as the window is resized.",
+      "Not grouping related widgets into a Frame, making a growing GUI's layout logic harder to reason about."
+    ],
+    practice: {
+      prompt: "Using grid(), lay out a Label 'Age:' at row 0 column 0, and an Entry at row 0 column 1.",
+      starter: "import tkinter as tk\nroot = tk.Tk()\n# your code here\nroot.mainloop()",
+      hint: 'tk.Label(root, text="Age:").grid(row=0, column=0) then tk.Entry(root).grid(row=0, column=1)'
+    },
+    challenge: {
+      prompt: "Build a small 3-row form (Name, Email, Password) inside a Frame using grid(), with a Submit button spanning both columns below the fields."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why is grid() usually preferred over pack() for building a form with labels and input fields?",
+        options: ["grid() is faster to execute", "grid() naturally aligns widgets into rows and columns, matching how a form's labels/inputs are usually structured", "pack() doesn't work with Entry widgets", "There's no real difference for forms"],
+        answer: 1,
+        explain: "Forms are naturally row/column structures (label + input per row), which grid() expresses directly."
+      }
+    ]
+  },
+  {
+    id: "l-tkinter-architecture",
+    levelId: "lvl17",
+    title: "Organizing Larger GUI Applications",
+    difficulty: "Hard",
+    minutes: 17,
+    prereq: ["l-tkinter-layout"],
+    concept: "As a GUI app grows past a single screen, organizing it around classes — one per screen or major component — keeps it manageable the same way OOP keeps any larger program manageable.",
+    analogy: "A one-screen script is a sticky note; a multi-screen app organized with classes is a filing system — each class owns its own state and widgets, instead of one script tracking everything in a tangle of global variables.",
+    whyItMatters: "This is the difference between the toy examples earlier in this section and an application someone could actually maintain and extend.",
+    explanation: [
+      "A common pattern: one class per screen, each building its own widgets in `__init__`, with a main App class that swaps which screen's Frame is currently visible (`.pack()`/`.pack_forget()` or `.grid()`/`.grid_forget()`).",
+      "Store shared application state (like the logged-in user, or a shopping cart list) as attributes on the main App instance, and pass a reference to it into each screen — the same idea as instance attributes from the OOP lesson.",
+      "File and database operations inside a GUI app follow the same patterns you already know (open()/json.load(), sqlite3 connections) — just triggered from a button's command callback instead of running top-to-bottom.",
+      "Wrap risky operations (file access, database calls) in try/except inside the GUI too, showing the user a message box (`tkinter.messagebox`) instead of letting the whole application crash on an unhandled exception."
+    ],
+    syntax: "class ScreenA(tk.Frame):\n    def __init__(self, parent, app):\n        super().__init__(parent)\n        self.app = app\n        # build widgets here",
+    example: 'import tkinter as tk\n\nclass HomeScreen(tk.Frame):\n    def __init__(self, parent, app):\n        super().__init__(parent)\n        tk.Label(self, text="Home").pack()\n        tk.Button(self, text="Go to Settings", command=app.show_settings).pack()\n\nclass SettingsScreen(tk.Frame):\n    def __init__(self, parent, app):\n        super().__init__(parent)\n        tk.Label(self, text="Settings").pack()\n\nclass App:\n    def __init__(self, root):\n        self.root = root\n        self.home = HomeScreen(root, self)\n        self.settings = SettingsScreen(root, self)\n        self.home.pack()\n\n    def show_settings(self):\n        self.home.pack_forget()\n        self.settings.pack()\n\nroot = tk.Tk()\napp = App(root)\nroot.mainloop()',
+    commonMistakes: [
+      "Tracking application state as scattered global variables instead of attributes on a central App object.",
+      "Building every screen's widgets directly inside one giant function instead of separate classes, making the code hard to navigate as it grows.",
+      "Letting an unhandled exception from a file or database operation crash the entire GUI instead of catching it and showing a message box."
+    ],
+    practice: {
+      prompt: "Using the App/HomeScreen/SettingsScreen pattern from the example, add a 'Back to Home' button on SettingsScreen that calls a new app.show_home() method.",
+      starter: "# Extend the example's App class with a show_home() method,\n# and add a button on SettingsScreen that calls it.",
+      hint: "show_home() should call self.settings.pack_forget() and self.home.pack(), mirroring show_settings()."
+    },
+    challenge: {
+      prompt: "Sketch (as comments/pseudocode) how you'd add a third screen for viewing a list of items loaded from a JSON file, following the same class-per-screen pattern."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why organize a multi-screen Tkinter app as one class per screen, rather than one long script?",
+        options: ["Tkinter requires classes", "It keeps each screen's widgets and logic self-contained and easier to maintain as the app grows", "It makes the app run faster", "Classes are only needed for file handling"],
+        answer: 1,
+        explain: "Separating screens into classes mirrors how OOP manages complexity generally — each piece owns its own state, instead of one script tracking everything."
+      }
+    ]
+  },
+
+  /* ---- Python Core depth pass: Deployment ---- */
+  {
+    id: "l-deployment-prep",
+    levelId: "lvl18",
+    title: "Preparing a Project for Production",
+    difficulty: "Hard",
+    minutes: 16,
+    prereq: ["l-deployment"],
+    concept: "Before any deployment step happens, a project needs to be in a state where it CAN be deployed — pinned dependencies, externalized configuration, and no assumptions specific to your own machine.",
+    analogy: "This is like packing for a trip you won't personally supervise: everything the project needs has to travel with it or be clearly listed, because you won't be there to fix a missing item by hand.",
+    whyItMatters: "Most real deployment failures trace back to this preparation step being skipped, not to the hosting platform itself.",
+    explanation: [
+      "`pip freeze > requirements.txt` captures your exact working dependency versions — commit this file so the production environment installs the same versions you tested with.",
+      "A WSGI server (like Gunicorn) is what actually runs a Flask app in production — Flask's own built-in server (`app.run()`) is explicitly meant for development only, not production traffic.",
+      "Static files (CSS, images) are often served more efficiently by the hosting platform or a dedicated static file server in production, rather than through Flask itself.",
+      "Every piece of configuration that differs between your machine and production — database location, secret key, debug mode — should be read from an environment variable, never hardcoded, tying directly back to the Secure Python and Deployment fundamentals lessons.",
+      "Production security basics: debug mode off, secrets never in the repository, and dependencies kept reasonably up to date to avoid known vulnerabilities."
+    ],
+    syntax: "pip freeze > requirements.txt\ngunicorn app:app   # runs a Flask app in production, instead of app.run()",
+    example: '# config.py — a single place production config is read from:\nimport os\n\nDEBUG = os.environ.get("FLASK_DEBUG", "false").lower() == "true"\nSECRET_KEY = os.environ["SECRET_KEY"]  # crash loudly if missing, rather than silently using an insecure default\nDATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///dev.db")',
+    commonMistakes: [
+      "Running app.run(debug=True) in production — Flask's built-in dev server isn't designed for real traffic, and debug mode can leak sensitive details.",
+      "Silently falling back to a default secret key or database when an environment variable is missing, instead of failing loudly so the misconfiguration gets noticed immediately.",
+      "Forgetting to regenerate requirements.txt after adding a new dependency, so production is missing something local development has."
+    ],
+    practice: {
+      prompt: "Write a config snippet that reads SECRET_KEY from an environment variable and raises a clear error immediately if it's missing, rather than using a default.",
+      starter: "import os\n\n# your code here",
+      hint: "os.environ['SECRET_KEY'] raises a KeyError automatically if missing — or check manually and raise a clearer custom message."
+    },
+    challenge: {
+      prompt: "List, as comments, three specific things you'd check are true about a Flask project before considering it 'ready' to deploy."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why shouldn't Flask's built-in development server (app.run()) be used in production?",
+        options: ["It's actually fine for production", "It's explicitly designed for development only — not built for production traffic, performance, or security", "It doesn't support routes", "It only works on localhost"],
+        answer: 1,
+        explain: "Flask's docs themselves state the built-in server isn't intended for production use — a real WSGI server like Gunicorn is the standard replacement."
+      }
+    ]
+  },
+  {
+    id: "l-deployment-workflow",
+    levelId: "lvl18",
+    title: "Deployment Workflow & Monitoring",
+    difficulty: "Medium",
+    minutes: 14,
+    prereq: ["l-deployment-prep"],
+    concept: "Deployment isn't a one-time event — it's a repeatable workflow for getting new changes live safely, and monitoring is how you find out something broke before your users tell you.",
+    analogy: "A good deployment workflow is like a pre-flight checklist pilots run every single time, not just the first time — consistency is what prevents mistakes as changes happen repeatedly.",
+    whyItMatters: "A project that can only be deployed once, carefully, by one person who remembers all the steps isn't really deployable — a repeatable workflow is what makes ongoing updates sustainable.",
+    explanation: [
+      "A typical Git-based deployment workflow: push code to GitHub, the hosting platform (or a CI/CD pipeline) automatically pulls the latest code, installs dependencies, and restarts the application.",
+      "CI/CD (Continuous Integration/Continuous Deployment), at a conceptual level, means automatically running your tests on every change (CI) and automatically deploying changes that pass those tests (CD) — reducing manual, error-prone steps.",
+      "Logs are your primary window into a deployed application's behavior — make sure errors are actually logged somewhere you'll see them, not just printed to a terminal no one is watching.",
+      "Basic monitoring means having *some* way to know the application is up and responding — even a simple periodic check of a health endpoint is far better than finding out from a user that the site is down.",
+      "Updating a deployed application safely generally means: test the change locally first, deploy it, then verify it actually works in production — not deploying blind and hoping."
+    ],
+    syntax: "git push origin main\n# -> hosting platform detects the push\n# -> installs dependencies, restarts the app",
+    example: "# Conceptual CI/CD flow, not a specific tool's exact syntax:\n# 1. Push to GitHub\n# 2. CI runs: pytest (all tests must pass)\n# 3. If tests pass, CD deploys the new version\n# 4. A health-check endpoint confirms the new version is responding",
+    commonMistakes: [
+      "Deploying directly without running tests first, discovering a broken change only after it's already live.",
+      "Having no logging or monitoring at all, so an outage is only discovered when a user reports it.",
+      "Manually repeating deployment steps from memory each time instead of having a documented or automated repeatable process."
+    ],
+    practice: {
+      prompt: "Describe, as ordered comments, the steps you'd want in a basic deployment workflow for a small Flask app, from committing code to confirming it's live.",
+      starter: "# 1.\n# 2.\n# 3.\n# 4.",
+      hint: "Something like: commit/push -> run tests -> deploy -> check a health endpoint."
+    },
+    challenge: {
+      prompt: "Explain, in a few sentences, what a 'health check' endpoint is and why even a very simple one is valuable for monitoring a deployed application."
+    },
+    knowledgeCheck: [
+      {
+        q: "What is the core idea behind CI/CD?",
+        options: ["Manually deploying code once a year", "Automatically testing (CI) and deploying (CD) changes to reduce manual, error-prone steps", "A type of database", "A Flask-specific feature only"],
+        answer: 1,
+        explain: "CI/CD automates the test-and-deploy pipeline so changes go out consistently and safely, rather than relying on someone remembering every manual step."
+      }
+    ]
+  },
+
+  /* ---- Python Core depth pass: Python Development gaps ---- */
+  {
+    id: "l-cli-argparse",
+    levelId: "lvl11",
+    title: "Command-Line Interfaces with argparse",
+    difficulty: "Medium",
+    minutes: 14,
+    prereq: ["l-testing"],
+    concept: "argparse turns a script's hardcoded values into proper command-line arguments — letting a script be reused with different inputs without editing its source code.",
+    analogy: "A script with hardcoded values is a vending machine with one fixed button; a script with argparse is one where you type in exactly what you want each time.",
+    whyItMatters: "This is what makes a script into a genuinely reusable command-line tool — one your future self, or anyone else, can run with different inputs without touching the code.",
+    explanation: [
+      "`argparse.ArgumentParser()` creates a parser; `.add_argument(\"name\")` defines a positional (required) argument, while `.add_argument(\"--flag\")` defines an optional, named one.",
+      "`parser.parse_args()` reads `sys.argv` (the actual command-line input) and returns an object with each argument as an attribute.",
+      "`type=int` (or any callable) automatically converts and validates an argument, raising a clear usage error if conversion fails — no manual int() and error handling needed.",
+      "argparse automatically generates a `--help` message from your argument definitions — a big improvement over inventing your own usage instructions by hand.",
+      "This is the natural next step once a script has a `def main():` — instead of hardcoding what main() operates on, it reads from parsed arguments."
+    ],
+    syntax: 'import argparse\nparser = argparse.ArgumentParser()\nparser.add_argument("filename")\nparser.add_argument("--verbose", action="store_true")\nargs = parser.parse_args()',
+    example: 'import argparse\n\nparser = argparse.ArgumentParser(description="Count words in a file")\nparser.add_argument("filename")\nparser.add_argument("--min-length", type=int, default=1)\nargs = parser.parse_args()\n\nwith open(args.filename) as f:\n    words = [w for w in f.read().split() if len(w) >= args.min_length]\nprint(f"{len(words)} words with length >= {args.min_length}")',
+    commonMistakes: [
+      "Manually parsing sys.argv with string slicing instead of using argparse, reinventing validation and help text argparse already provides.",
+      "Forgetting that positional arguments (no -- prefix) are required by default, while --flag arguments are optional unless marked required=True.",
+      "Not setting type= for a numeric argument, so it arrives as a string and math operations fail unexpectedly."
+    ],
+    practice: {
+      prompt: "Write an argparse setup for a script that takes one required positional argument 'name' and prints 'Hello, {name}!'.",
+      starter: "import argparse\n\n# your code here\nprint(f\"Hello, {args.name}!\")",
+      hint: "parser.add_argument('name'), then args = parser.parse_args(), then use args.name."
+    },
+    challenge: {
+      prompt: "Extend the example word-counter script with an optional --uppercase flag (action='store_true') that prints the qualifying words in uppercase if set."
+    },
+    knowledgeCheck: [
+      {
+        q: "What's the difference between parser.add_argument('filename') and parser.add_argument('--verbose')?",
+        options: ["No difference", "'filename' is a required positional argument; '--verbose' is an optional named flag", "'--verbose' is required and 'filename' is optional", "Both are always optional"],
+        answer: 1,
+        explain: "A plain name defines a required positional argument; a -- prefixed name defines an optional flag, off by default unless action='store_true' or similar is used."
+      }
+    ]
+  },
+  {
+    id: "l-config-logging",
+    levelId: "lvl11",
+    title: "Configuration & Logging Patterns",
+    difficulty: "Medium",
+    minutes: 13,
+    prereq: ["l-cli-argparse"],
+    concept: "Real projects separate 'what the code does' from 'what settings it runs with' — configuration — and use structured logging instead of scattered print statements to observe what happened.",
+    analogy: "Hardcoding a setting is like painting a light switch permanently on; configuration is an actual switch anyone can flip without repainting the wall.",
+    whyItMatters: "This closes the loop on everything the Python Development and Deployment sections have been building toward: a project that's genuinely reusable and debuggable, not just working once on your machine.",
+    explanation: [
+      "The layered pattern used throughout this course: sensible defaults in code, overridable by environment variables, e.g. `os.environ.get(\"LOG_LEVEL\", \"INFO\")`.",
+      "A small config.py module (or a dedicated Config class) centralizes these lookups in one place, rather than scattering `os.environ.get(...)` calls throughout the codebase.",
+      "`logging.getLogger(__name__)` gives each module its own named logger, so log output shows exactly which part of a larger project produced a given message.",
+      "Log levels exist so you can turn up verbosity (DEBUG) while developing and turn it down (WARNING/ERROR only) in production, without changing any code — just the configured level.",
+      "This is the same idea as the automation-logging lesson, applied project-wide: consistent, leveled, centrally configured logging beats scattered print() calls everywhere."
+    ],
+    syntax: "import logging\nlogger = logging.getLogger(__name__)\nlogging.basicConfig(level=os.environ.get(\"LOG_LEVEL\", \"INFO\"))",
+    example: '# config.py\nimport os\n\nclass Config:\n    LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")\n    DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///dev.db")\n\n# main.py\nimport logging\nfrom config import Config\n\nlogging.basicConfig(level=Config.LOG_LEVEL)\nlogger = logging.getLogger(__name__)\nlogger.info("Application starting with database: %s", Config.DATABASE_URL)',
+    commonMistakes: [
+      "Scattering os.environ.get() calls throughout many files instead of centralizing them in one config module.",
+      "Leaving logging at DEBUG level in production, generating far more noise than is useful.",
+      "Using the root logger everywhere instead of logging.getLogger(__name__), losing the ability to tell which module produced a given message."
+    ],
+    practice: {
+      prompt: "Write a small Config class with a LOG_LEVEL attribute read from an environment variable, defaulting to 'INFO' if not set.",
+      starter: "import os\n\nclass Config:\n    # your code here\n    pass",
+      hint: 'LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO") as a class attribute.'
+    },
+    challenge: {
+      prompt: "Set up logging using logging.getLogger(__name__) in two different (illustrative) modules, and explain in a comment how the log output would let you tell them apart."
+    },
+    knowledgeCheck: [
+      {
+        q: "Why use logging.getLogger(__name__) instead of just calling logging.info() directly everywhere?",
+        options: ["There's no difference", "It tags each log message with the specific module that produced it, useful in any project with more than one file", "getLogger(__name__) is required by Python", "It disables logging entirely"],
+        answer: 1,
+        explain: "Named loggers let you trace a log message back to its source module — essential once a project grows past a single file."
       }
     ]
   }
@@ -2595,6 +3654,325 @@ const EXERCISES = [
     xp: 15
   },
 
+  /* ---- Python Core expansion exercises ---- */
+  {
+    id: "ex-turtle-1",
+    topicId: "l-turtle",
+    title: "Draw a Triangle",
+    difficulty: "Easy",
+    problem: "Using turtle, write a loop that draws an equilateral triangle with 100-unit sides (turn angle 120 degrees).",
+    requirements: ["Use a for loop, not three repeated lines", "Turn 120 degrees each time"],
+    example: { input: "—", output: "A triangle is drawn" },
+    starter: "import turtle\nt = turtle.Turtle()\n# your loop here\nturtle.done()",
+    concept: "l-turtle",
+    variantOf: null,
+    xp: 10
+  },
+  {
+    id: "ex-testing-1",
+    topicId: "l-testing",
+    title: "Write a Test",
+    difficulty: "Medium",
+    problem: "Given a function `square(n)` already defined elsewhere, write a pytest test function test_square() that asserts square(4) == 16.",
+    requirements: ["Function must be named test_square", "Use assert"],
+    example: { input: "square(4)", output: "16" },
+    starter: "def test_square():\n    # your assertion here\n    pass",
+    concept: "l-testing",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-automation-1",
+    topicId: "l-automation",
+    title: "List Files by Extension",
+    difficulty: "Medium",
+    problem: "Using pathlib, write list_text_files(folder) that returns a list of all .txt filenames (not full paths) in the given folder.",
+    requirements: ["Use Path.glob()", "Return filenames as strings, not Path objects"],
+    example: { input: '"."', output: "['notes.txt', 'todo.txt']" },
+    starter: 'from pathlib import Path\n\ndef list_text_files(folder):\n    # your code here\n    pass\n\nprint(list_text_files("."))',
+    concept: "l-automation",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-scraping-1",
+    topicId: "l-scraping",
+    title: "Extract Text with BeautifulSoup",
+    difficulty: "Hard",
+    problem: 'Given html = "<div><h1>Title</h1><p class=\'price\'>$19.99</p></div>", use BeautifulSoup to extract and print the price.',
+    requirements: ["Use soup.find() with the class_ argument", "Print just the price text"],
+    example: { input: "sample html", output: "$19.99" },
+    starter: 'from bs4 import BeautifulSoup\n\nhtml = "<div><h1>Title</h1><p class=\'price\'>$19.99</p></div>"\n# your code here',
+    concept: "l-scraping",
+    variantOf: null,
+    xp: 20
+  },
+  {
+    id: "ex-apis-1",
+    topicId: "l-apis",
+    title: "Handle a Response Safely",
+    difficulty: "Medium",
+    functionSignature: "def fetch_json(url):",
+    problem: "Write fetch_json(url) using requests that returns response.json() on a 200 status, or None otherwise. Assume requests is already imported.",
+    requirements: ["Check status_code == 200 before calling .json()", "Return None on any other status"],
+    example: { input: "url returning 200", output: "parsed JSON dict" },
+    starter: "import requests\n\ndef fetch_json(url):\n    # your code here\n    pass",
+    concept: "l-apis",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-databases-1",
+    topicId: "l-databases",
+    title: "Insert Safely",
+    difficulty: "Hard",
+    type: "debug",
+    problem: "This code builds an INSERT statement with an f-string, which is unsafe. Rewrite it using a parameterized query.",
+    requirements: ["Use a ? placeholder with a tuple of values", "Never build the query with an f-string"],
+    starter: 'import sqlite3\nconn = sqlite3.connect("app.db")\ncursor = conn.cursor()\ntext = "Buy milk"\ncursor.execute(f"INSERT INTO tasks (text) VALUES (\'{text}\')")  # fix this\nconn.commit()',
+    example: { input: "—", output: "Safely parameterized INSERT" },
+    concept: "l-databases",
+    variantOf: null,
+    xp: 20
+  },
+  {
+    id: "ex-flask-1",
+    topicId: "l-flask",
+    title: "A JSON Route",
+    difficulty: "Hard",
+    problem: 'Write a Flask route /api/hello that returns a JSON response {"message": "Hello, world!"} using jsonify.',
+    requirements: ["Use @app.route", "Return jsonify(...) with the exact message"],
+    example: { input: "GET /api/hello", output: '{"message": "Hello, world!"}' },
+    starter: 'from flask import Flask, jsonify\napp = Flask(__name__)\n\n# your route here\n\nif __name__ == "__main__":\n    app.run(debug=True)',
+    concept: "l-flask",
+    variantOf: null,
+    xp: 20
+  },
+  {
+    id: "ex-tkinter-1",
+    topicId: "l-tkinter",
+    title: "Minimal Tkinter Window",
+    difficulty: "Medium",
+    problem: "Write a minimal Tkinter app with a single Label showing 'Hello, Tkinter!' and nothing else.",
+    requirements: ["Create the label with the exact text", "Call root.mainloop() at the end"],
+    example: { input: "—", output: "A window with the label appears" },
+    starter: "import tkinter as tk\nroot = tk.Tk()\n# your code here\nroot.mainloop()",
+    concept: "l-tkinter",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-deployment-1",
+    topicId: "l-deployment",
+    title: "Safe Production Config",
+    difficulty: "Hard",
+    type: "short_answer",
+    problem: "In one or two sentences: why should DEBUG mode be disabled in a production deployment?",
+    acceptableAnswers: ["leak", "sensitive", "stack trace", "expose", "information", "security"],
+    hint: "Debug mode often shows detailed error pages, including stack traces and internal details — fine for you locally, risky for strangers on the internet.",
+    xp: 15
+  },
+
+  /* ---- Python Core depth pass exercises ---- */
+  {
+    id: "ex-automation-data-1",
+    topicId: "l-automation-data",
+    title: "Sum a CSV Column",
+    difficulty: "Medium",
+    problem: "Write total_amount(path) that reads a CSV file with an 'amount' column using csv.DictReader and returns the sum as a float.",
+    requirements: ["Use csv.DictReader", "Convert each amount to float before summing"],
+    example: { input: "CSV with amount column", output: "sum as float" },
+    starter: "import csv\n\ndef total_amount(path):\n    # your code here\n    pass",
+    concept: "l-automation-data",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-automation-robust-mc",
+    topicId: "l-automation-robust",
+    title: "print() vs logging",
+    difficulty: "Easy",
+    type: "multiple_choice",
+    problem: "For an unattended script that runs on a schedule with no one watching, which is the better choice for recording what happened?",
+    options: ["print() statements", "The logging module, writing to a file", "No output at all", "input() prompts"],
+    correctIndex: 1,
+    hint: "Nobody is watching a scheduled script's terminal output in real time.",
+    xp: 10
+  },
+  {
+    id: "ex-scraping-tables-1",
+    topicId: "l-scraping-advanced",
+    title: "Extract Table Rows",
+    difficulty: "Hard",
+    problem: "Given a sample HTML table, use BeautifulSoup with CSS selectors to extract each row's cells into a list of (name, price) tuples.",
+    requirements: ["Use soup.select() for the rows", "Extract each row's <td> cells"],
+    example: { input: "table HTML", output: "[('Widget', '$9.99')]" },
+    starter: 'from bs4 import BeautifulSoup\n\nhtml = "<table><tr><td>Widget</td><td>$9.99</td></tr></table>"\n# your code here',
+    concept: "l-scraping-advanced",
+    variantOf: null,
+    xp: 20
+  },
+  {
+    id: "ex-selenium-tf",
+    topicId: "l-selenium",
+    title: "True or False: Waiting for Elements",
+    difficulty: "Medium",
+    type: "true_false",
+    problem: "True or False: Using a fixed time.sleep(5) is generally more reliable than an explicit WebDriverWait for a specific element when a page loads content asynchronously.",
+    correctAnswer: false,
+    hint: "A fixed sleep is either too short (element still not there) or wastes time (element appeared sooner) — an explicit wait for the specific element is more reliable.",
+    xp: 10
+  },
+  {
+    id: "ex-rest-deep-mc",
+    topicId: "l-rest-deep",
+    title: "Pick the Right Method",
+    difficulty: "Medium",
+    type: "multiple_choice",
+    problem: "You need to update only the 'status' field of an existing task, leaving other fields untouched. Which HTTP method fits best?",
+    options: ["GET", "PUT", "PATCH", "DELETE"],
+    correctIndex: 2,
+    hint: "PUT implies replacing the whole resource; PATCH implies a partial update.",
+    xp: 10
+  },
+  {
+    id: "ex-api-client-robust-1",
+    topicId: "l-api-client-robust",
+    title: "Retry on Server Errors Only",
+    difficulty: "Hard",
+    problem: "Write should_retry(status_code) that returns True for a 5xx status code, and False for anything else (including 4xx).",
+    requirements: ["Return True only for status codes 500-599", "Return False otherwise"],
+    example: { input: "503", output: "True" },
+    starter: "def should_retry(status_code):\n    # your code here\n    pass\n\nprint(should_retry(503))\nprint(should_retry(404))",
+    concept: "l-api-client-robust",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-db-design-1",
+    topicId: "l-db-design",
+    title: "Write a JOIN Query",
+    difficulty: "Hard",
+    type: "short_answer",
+    problem: "Given tables authors(id, name) and books(id, title, author_id), write the SQL JOIN query that lists each book's title with its author's name.",
+    acceptableAnswers: ["join", "select", "on", "author_id"],
+    hint: "SELECT books.title, authors.name FROM books JOIN authors ON books.author_id = authors.id",
+    xp: 15
+  },
+  {
+    id: "ex-db-transactions-mc",
+    topicId: "l-db-transactions",
+    title: "Why Roll Back?",
+    difficulty: "Hard",
+    type: "multiple_choice",
+    problem: "In a money-transfer function, the second of two UPDATE statements fails after the first already succeeded but before commit(). What should happen?",
+    options: ["Commit anyway to save partial progress", "Call rollback() to discard the uncommitted first UPDATE too, avoiding an inconsistent state", "Ignore the error and continue", "Delete the accounts table"],
+    correctIndex: 1,
+    hint: "Since nothing has been committed yet, rolling back both changes avoids leaving money missing from one account without arriving in the other.",
+    xp: 15
+  },
+  {
+    id: "ex-flask-templates-1",
+    topicId: "l-flask-templates",
+    title: "Read a Query Parameter",
+    difficulty: "Medium",
+    problem: "Write a Flask route /welcome that reads a 'username' query parameter (default 'Guest') and returns a JSON greeting using it.",
+    requirements: ["Use request.args.get() with a default", "Return a JSON response"],
+    example: { input: "/welcome?username=Ada", output: '{"message": "Hello, Ada!"}' },
+    starter: 'from flask import Flask, jsonify, request\napp = Flask(__name__)\n\n# your route here',
+    concept: "l-flask-templates",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-flask-security-1",
+    topicId: "l-flask-security",
+    title: "Hash and Verify a Password",
+    difficulty: "Hard",
+    problem: "Using werkzeug.security, hash the password 'hunter2' and then verify a correct and an incorrect attempt against that hash, printing both results.",
+    requirements: ["Use generate_password_hash and check_password_hash", "Print both True/False results"],
+    example: { input: '"hunter2"', output: "True\nFalse" },
+    starter: "from werkzeug.security import generate_password_hash, check_password_hash\n\n# your code here",
+    concept: "l-flask-security",
+    variantOf: null,
+    xp: 20
+  },
+  {
+    id: "ex-tkinter-layout-1",
+    topicId: "l-tkinter-layout",
+    title: "Build a Grid Form",
+    difficulty: "Medium",
+    problem: "Using grid(), create a Label 'Age:' at row 0 column 0 and an Entry at row 0 column 1.",
+    requirements: ["Use .grid(row=, column=)", "Don't mix pack() and grid() on the same parent"],
+    example: { input: "—", output: "A simple aligned form row" },
+    starter: "import tkinter as tk\nroot = tk.Tk()\n# your code here\nroot.mainloop()",
+    concept: "l-tkinter-layout",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-tkinter-architecture-mc",
+    topicId: "l-tkinter-architecture",
+    title: "Organizing Screens",
+    difficulty: "Hard",
+    type: "multiple_choice",
+    problem: "What's the recommended way to organize a Tkinter app with several distinct screens?",
+    options: ["One giant function building every widget for every screen", "One class per screen, each managing its own widgets, swapped in/out by a central App object", "Global variables for every widget", "A separate Python file with no shared structure"],
+    correctIndex: 1,
+    hint: "This mirrors the same separation-of-concerns idea used throughout the course, applied to GUI screens.",
+    xp: 10
+  },
+  {
+    id: "ex-deployment-prep-1",
+    topicId: "l-deployment-prep",
+    title: "Fail Loudly on Missing Config",
+    difficulty: "Hard",
+    problem: "Write code that reads SECRET_KEY from an environment variable and raises a clear RuntimeError if it's missing, instead of silently using a default.",
+    requirements: ["Use os.environ", "Raise RuntimeError with a clear message if missing"],
+    example: { input: "—", output: "Raises RuntimeError if SECRET_KEY is unset" },
+    starter: "import os\n\n# your code here",
+    concept: "l-deployment-prep",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-deployment-workflow-tf",
+    topicId: "l-deployment-workflow",
+    title: "True or False: Testing Before Deploy",
+    difficulty: "Medium",
+    type: "true_false",
+    problem: "True or False: A good deployment workflow deploys changes first, then runs tests afterward to check if anything broke.",
+    correctAnswer: false,
+    hint: "Tests should run and pass BEFORE deploying, so broken changes are caught before they go live.",
+    xp: 10
+  },
+  {
+    id: "ex-argparse-1",
+    topicId: "l-cli-argparse",
+    title: "Build a CLI",
+    difficulty: "Medium",
+    problem: "Write argparse setup for a script with one required positional argument 'name', printing 'Hello, {name}!' using it.",
+    requirements: ["Use ArgumentParser and add_argument", "Use parse_args() and access args.name"],
+    example: { input: "python script.py Ada", output: "Hello, Ada!" },
+    starter: "import argparse\n\n# your code here\nprint(f\"Hello, {args.name}!\")",
+    concept: "l-cli-argparse",
+    variantOf: null,
+    xp: 15
+  },
+  {
+    id: "ex-config-logging-1",
+    topicId: "l-config-logging",
+    title: "Centralized Config Class",
+    difficulty: "Medium",
+    problem: "Write a Config class with a LOG_LEVEL class attribute read from an environment variable, defaulting to 'INFO'.",
+    requirements: ["Use os.environ.get() with a default", "LOG_LEVEL must be a class attribute"],
+    example: { input: "—", output: "Config.LOG_LEVEL == 'INFO' if unset" },
+    starter: "import os\n\nclass Config:\n    # your code here\n    pass\n\nprint(Config.LOG_LEVEL)",
+    concept: "l-config-logging",
+    variantOf: null,
+    xp: 15
+  },
+
   /* ---- Cybersecurity track exercises ---- */
   {
     id: "ex-cy-mc-cia",
@@ -3177,6 +4555,23 @@ const REFERENCE = [
   { id: "ref-social-eng", category: "Social Engineering", term: "Social Engineering Tactics", definition: "Manipulating human psychology — authority, urgency, fear, helpfulness — to bypass technical security controls.", explanation: "The safest defense is independently verifying unexpected requests using contact info you already trust, never info the request itself provides.", syntax: "red flags: unsolicited contact + urgency + request for sensitive info + pressure not to verify", example: "A fake 'IT support' call asking for your password bypasses every technical control if you simply hand it over.", mistakes: "Verifying a claim using contact details supplied by the suspicious source itself.", related: ["Phishing Indicators"], whenToUse: "Any unexpected request for sensitive information, money, or system access." },
   { id: "ref-security-headers", category: "Web Security", term: "Security Headers", definition: "HTTP response headers that instruct the browser to enforce additional protections for a page.", explanation: "Content-Security-Policy, X-Frame-Options, Strict-Transport-Security, and X-Content-Type-Options are common, high-value examples.", syntax: "Content-Security-Policy: default-src 'self'\nStrict-Transport-Security: max-age=31536000", example: "HSTS tells the browser to never connect over plain HTTP again, closing a downgrade-attack window.", mistakes: "Assuming HTTPS alone is sufficient without these additional defense-in-depth headers.", related: ["HTTP vs HTTPS", "XSS & Output Encoding"], whenToUse: "Reviewing or hardening any web application's HTTP responses." },
   { id: "ref-mobile-security", category: "Mobile Security", term: "App Sandboxing & Permissions", definition: "Each mobile app runs isolated by default; permissions are explicit, revocable grants of access to sensitive resources.", explanation: "A malicious app typically requests permissions unrelated to its stated function — a classic detection signal.", syntax: "app runs sandboxed -> requests permission -> user grants/denies -> access scoped to that grant", example: "A flashlight app requesting SMS and contacts access is requesting permissions unrelated to its function.", mistakes: "Granting every requested permission without checking relevance to the app's purpose.", related: ["Authentication vs Authorization"], whenToUse: "Reviewing app permissions before installing, or assessing mobile app security." },
+
+  /* ---- Python Core expansion references ---- */
+  { id: "ref-requests-lib", category: "Web Scraping", term: "requests library", definition: "The standard Python library for making HTTP requests.", explanation: "Fetches web pages and API responses; always check .status_code before trusting the result.", syntax: "response = requests.get(url, params={...}, timeout=5)\nresponse.status_code\nresponse.json()", example: 'r = requests.get("https://api.example.com")\nif r.status_code == 200:\n    data = r.json()', mistakes: "Not setting a timeout, letting a slow/unresponsive server hang the whole program.", related: ["BeautifulSoup", "HTTP vs HTTPS"], whenToUse: "Fetching any web page or API response from Python." },
+  { id: "ref-beautifulsoup", category: "Web Scraping", term: "BeautifulSoup", definition: "A library for parsing HTML and navigating its structure to extract data.", explanation: "Pair it with requests: fetch the HTML, then parse it with BeautifulSoup.", syntax: 'from bs4 import BeautifulSoup\nsoup = BeautifulSoup(html, "html.parser")\nsoup.find("h1")\nsoup.find_all("a")', example: 'soup.find("p", class_="price").text', mistakes: "Assuming a page's structure never changes — scrapers commonly break when a site updates its HTML.", related: ["requests library"], whenToUse: "Extracting specific data out of an HTML page." },
+  { id: "ref-sql-basics", category: "Databases", term: "SQL Basics", definition: "The query language for reading and modifying data in a relational database.", explanation: "SELECT reads, INSERT adds, UPDATE modifies, DELETE removes — WHERE filters which rows are affected.", syntax: "SELECT * FROM table WHERE condition;\nINSERT INTO table (col) VALUES (?);\nUPDATE table SET col = ? WHERE id = ?;", example: "SELECT * FROM tasks WHERE done = 0 ORDER BY id;", mistakes: "Running UPDATE/DELETE without a WHERE clause, affecting every row in the table.", related: ["sqlite3", "SQL Injection & Parameterized Queries"], whenToUse: "Any time you need to read or change data stored in a relational database." },
+  { id: "ref-sqlite3", category: "Databases", term: "sqlite3 module", definition: "Python's built-in interface to SQLite, a lightweight file-based relational database.", explanation: "No separate server needed — perfect for learning and small applications.", syntax: "import sqlite3\nconn = sqlite3.connect(\"app.db\")\nconn.execute(\"...\", (params,))\nconn.commit()", example: 'cursor.execute("SELECT * FROM tasks WHERE id = ?", (task_id,))', mistakes: "Forgetting conn.commit() after a write, so changes never actually save.", related: ["SQL Basics"], whenToUse: "Adding persistent, queryable storage to a Python project without a separate database server." },
+  { id: "ref-flask-basics", category: "Web Backend", term: "Flask Routes", definition: "Flask maps URLs to Python functions using the @app.route decorator.", explanation: "The function's return value becomes the HTTP response; route parameters capture parts of the URL as variables.", syntax: '@app.route("/path/<int:id>")\ndef view(id):\n    return jsonify(...)', example: '@app.route("/api/tasks/<int:task_id>")\ndef get_task(task_id):\n    ...', mistakes: "Forgetting a route function must return something, or hardcoding secrets/config in the app file.", related: ["APIs & REST"], whenToUse: "Building any backend endpoint or small web application in Python." },
+  { id: "ref-tkinter-basics", category: "GUI Development", term: "Tkinter Widgets", definition: "Tkinter's building blocks for desktop GUIs — Label, Button, Entry, and more — added to a root window.", explanation: "Every app needs a layout call (like .pack()) per widget and a final .mainloop() to actually run.", syntax: "root = tk.Tk()\nwidget = tk.Label(root, text=\"...\")\nwidget.pack()\nroot.mainloop()", example: 'button = tk.Button(root, text="Click", command=on_click)\nbutton.pack()', mistakes: "Passing on_click() instead of on_click to command=, which runs it immediately instead of on click.", related: ["Function"], whenToUse: "Building a desktop application with a graphical interface in Python." },
+
+  /* ---- Python Core depth pass references ---- */
+  { id: "ref-argparse", category: "Automation", term: "argparse", definition: "Python's standard library module for building command-line interfaces.", explanation: "Turns a script's hardcoded values into reusable command-line arguments, with automatic --help text and validation.", syntax: "parser = argparse.ArgumentParser()\nparser.add_argument(\"name\")\nparser.add_argument(\"--flag\", action=\"store_true\")\nargs = parser.parse_args()", example: 'parser.add_argument("--count", type=int, default=1)', mistakes: "Manually parsing sys.argv instead of using argparse's built-in validation and help generation.", related: ["Automation"], whenToUse: "Turning any script into a reusable command-line tool." },
+  { id: "ref-logging-module", category: "Automation", term: "logging module", definition: "Python's standard library for leveled, timestamped, redirectable log output.", explanation: "Replaces scattered print() calls, especially valuable for scripts that run unattended.", syntax: "logging.basicConfig(filename=\"app.log\", level=logging.INFO)\nlogger = logging.getLogger(__name__)\nlogger.info(\"message\")", example: 'logging.error(f"Task failed: {error}")', mistakes: "Using print() for a scheduled/unattended script, where no one is watching the terminal.", related: ["argparse"], whenToUse: "Any script or application where you need a persistent, leveled record of what happened." },
+  { id: "ref-selenium-basics", category: "Web Scraping", term: "Selenium", definition: "A browser automation library — drives a real browser to navigate, read, and interact with pages, including JavaScript-rendered content.", explanation: "Use only on sites/pages you're permitted to automate; always quit the driver when done.", syntax: "driver = webdriver.Chrome()\ndriver.get(url)\ndriver.find_element(By.ID, \"...\")\ndriver.quit()", example: 'WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "title")))', mistakes: "Using a fixed time.sleep() instead of an explicit wait for the specific element you need.", related: ["requests library", "BeautifulSoup"], whenToUse: "When a page requires JavaScript rendering or actual interaction (clicks, form fills) that a plain HTML fetch can't provide." },
+  { id: "ref-postgresql", category: "Databases", term: "PostgreSQL", definition: "A production-grade relational database — the natural next step after SQLite for multi-user or larger-scale applications.", explanation: "The SQL syntax and parameterized-query safety principles from SQLite carry over almost directly.", syntax: "import psycopg2\nconn = psycopg2.connect(connection_string)", example: 'cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))', mistakes: "Assuming PostgreSQL requires entirely different code from SQLite — most SQL and safety patterns transfer directly.", related: ["sqlite3", "SQL Basics"], whenToUse: "Once an application needs multiple simultaneous users, stronger data types, or scale beyond what a local SQLite file supports." },
+  { id: "ref-jinja", category: "Web Backend", term: "Jinja Templates", definition: "Flask's templating language for building HTML pages from Python data.", explanation: "Automatically escapes inserted values by default, which is an important XSS defense — avoid disabling it.", syntax: "{{ variable }}\n{% for item in items %}...{% endfor %}\n{% if condition %}...{% endif %}", example: 'return render_template("page.html", name=name)', mistakes: "Disabling Jinja's automatic escaping without understanding it reintroduces an XSS risk.", related: ["Flask Routes", "XSS & Output Encoding"], whenToUse: "Rendering an actual HTML page (not just JSON) from a Flask route." },
+  { id: "ref-password-hashing", category: "Web Backend", term: "Password Hashing (werkzeug)", definition: "werkzeug.security provides generate_password_hash/check_password_hash for securely storing and verifying passwords in Flask apps.", explanation: "Never store or compare plain-text passwords — always hash before storing, and compare hashes on login.", syntax: "from werkzeug.security import generate_password_hash, check_password_hash\nhashed = generate_password_hash(password)\ncheck_password_hash(hashed, attempt)", example: 'if check_password_hash(stored_hash, request.form["password"]):\n    session["user_id"] = user.id', mistakes: "Storing a plain-text password anywhere, even briefly.", related: ["Hashing", "Flask Routes"], whenToUse: "Any Flask app implementing user login/signup." },
+  { id: "ref-wsgi", category: "Deployment", term: "WSGI & Production Servers", definition: "Flask's built-in dev server (app.run()) is not meant for production — a WSGI server like Gunicorn runs Flask apps in production instead.", explanation: "Separating 'how the app runs locally' from 'how it runs in production' is a core deployment concept.", syntax: "gunicorn app:app", example: "# Development: app.run(debug=True)\n# Production: gunicorn app:app", mistakes: "Running the Flask development server in production, which isn't built for real traffic, performance, or security.", related: ["Deploying Python/Flask Apps"], whenToUse: "Deploying any Flask application to a real hosting environment." },
 ];
 
 const BEGINNER_PROJECTS = [
@@ -3499,6 +4894,395 @@ const BEGINNER_PROJECTS = [
     checklist: ["Regex reliably extracts IP + status", "Failed attempts counted per IP", "Results sorted by count", "Handles lines that don't match the pattern"],
     extensions: ["Flag any IP with 3+ failures as suspicious", "Support multiple log formats", "Write the report to a summary file"],
     xpReward: 95
+  },
+
+  /* ---- Development / Advanced tier — Python Core expansion ---- */
+  {
+    id: "proj-api-client",
+    title: "API Client",
+    difficulty: "Intermediate",
+    guidance: "Semi-guided",
+    minutes: 75,
+    skills: ["requests", "JSON", "Error handling", "Functions"],
+    prereq: ["l-apis"],
+    objective: "A small command-line tool that fetches data from a public API, handles failures gracefully, and presents the results clearly.",
+    requirements: [
+      "Fetch data from a public API you have permission to use (or a mock/sample response)",
+      "Handle a failed request without crashing (bad status code or network error)",
+      "Parse the JSON response and display the relevant fields clearly",
+      "Read any API key from an environment variable if the API requires one"
+    ],
+    structure: "api_client.py\n  fetch_data(url, params=None)\n  display_results(data)\n  main()",
+    milestones: [
+      "Write fetch_data() to make the request and return parsed JSON or None on failure",
+      "Handle both a bad status code and a network exception (try/except)",
+      "Write display_results() to format the output clearly for a user",
+      "Wrap it in a main() with basic error messaging"
+    ],
+    hints: [
+      "requests.exceptions.RequestException catches most network-level failures in one except clause.",
+      "Keep the API key handling identical to the pattern from the APIs lesson: os.environ.get(), never hardcoded.",
+      "Test your error handling by deliberately pointing at a bad URL first."
+    ],
+    starter: 'import os\nimport requests\n\ndef fetch_data(url, params=None):\n    try:\n        response = requests.get(url, params=params, timeout=5)\n        if response.status_code == 200:\n            return response.json()\n        return None\n    except requests.exceptions.RequestException:\n        return None\n\ndef display_results(data):\n    # your formatting here\n    pass\n\nif __name__ == "__main__":\n    data = fetch_data("https://api.example.com/data")\n    display_results(data)',
+    checklist: ["Handles a failed request without crashing", "Parses and displays JSON clearly", "API key (if any) read from environment variable", "Works against a real or mock endpoint"],
+    extensions: ["Add command-line arguments for the query", "Cache the last successful response to a file", "Add retry logic with a short delay on failure"],
+    xpReward: 90
+  },
+  {
+    id: "proj-web-scraper",
+    title: "Web Scraper",
+    difficulty: "Intermediate",
+    guidance: "Semi-guided",
+    minutes: 80,
+    skills: ["requests", "BeautifulSoup", "File handling", "Error handling"],
+    prereq: ["l-scraping"],
+    objective: "A tool that scrapes structured data (like a list of titles and prices) from a permitted site or local sample HTML, and saves it to CSV.",
+    requirements: [
+      "Fetch and parse HTML from a permitted source (public data, a site you're authorized to scrape, or a local sample HTML file)",
+      "Extract structured data — at least two fields per item (e.g. title and price)",
+      "Handle missing fields on some items without crashing",
+      "Save the results to a CSV file"
+    ],
+    structure: "web_scraper.py\n  fetch_page(url_or_path)\n  parse_items(html)\n  save_to_csv(items, filename)",
+    milestones: [
+      "Fetch (or load locally) the target HTML",
+      "Write parse_items() to extract a list of dicts, one per item",
+      "Handle items missing an expected field gracefully",
+      "Save the results with Python's csv module"
+    ],
+    hints: [
+      "Practicing against a local sample HTML file you control is a perfectly good, fully authorized way to build this.",
+      "soup.find_all() combined with a loop is the core pattern for extracting repeated items.",
+      "Wrap individual item parsing in a try/except so one malformed item doesn't crash the whole run."
+    ],
+    starter: 'import csv\nfrom bs4 import BeautifulSoup\n\ndef parse_items(html):\n    soup = BeautifulSoup(html, "html.parser")\n    items = []\n    # your extraction loop here\n    return items\n\ndef save_to_csv(items, filename="results.csv"):\n    with open(filename, "w", newline="") as f:\n        writer = csv.DictWriter(f, fieldnames=["title", "price"])\n        writer.writeheader()\n        writer.writerows(items)\n\nif __name__ == "__main__":\n    sample_html = "<div class=\'item\'><h2>Widget</h2><span class=\'price\'>$9.99</span></div>"\n    save_to_csv(parse_items(sample_html))',
+    checklist: ["Extracts at least 2 fields per item", "Missing fields handled without crashing", "Results saved to CSV correctly", "Only targets permitted/authorized/local sources"],
+    extensions: ["Add pagination support", "Deduplicate items before saving", "Add a delay between requests when scraping multiple pages"],
+    xpReward: 95
+  },
+  {
+    id: "proj-database-app",
+    title: "Database-Backed Notes App",
+    difficulty: "Intermediate",
+    guidance: "Semi-guided",
+    minutes: 85,
+    skills: ["SQLite", "SQL", "Functions", "CRUD"],
+    prereq: ["l-databases"],
+    objective: "A command-line notes app backed by a real SQLite database, supporting full create/read/update/delete instead of a JSON file.",
+    requirements: [
+      "Create a notes table on first run if it doesn't exist",
+      "Support adding, listing, updating, and deleting notes (CRUD)",
+      "Use parameterized queries everywhere — never build SQL with string concatenation",
+      "Data must persist in the .db file between runs"
+    ],
+    structure: "notes_db.py\n  init_db(conn)\n  add_note(conn, text)\n  list_notes(conn)\n  update_note(conn, note_id, text)\n  delete_note(conn, note_id)",
+    milestones: [
+      "Set up the database connection and create the table if missing",
+      "Implement add_note() and list_notes()",
+      "Implement update_note() and delete_note(), both parameterized",
+      "Wrap everything in a menu loop"
+    ],
+    hints: [
+      "CREATE TABLE IF NOT EXISTS avoids errors on every subsequent run.",
+      "Every value that comes from user input belongs in a ? placeholder, never in the query string itself.",
+      "Remember conn.commit() after every INSERT/UPDATE/DELETE."
+    ],
+    starter: 'import sqlite3\n\ndef init_db(conn):\n    conn.execute("CREATE TABLE IF NOT EXISTS notes (id INTEGER PRIMARY KEY, text TEXT)")\n    conn.commit()\n\ndef add_note(conn, text):\n    conn.execute("INSERT INTO notes (text) VALUES (?)", (text,))\n    conn.commit()\n\ndef list_notes(conn):\n    return conn.execute("SELECT * FROM notes").fetchall()\n\ndef main():\n    conn = sqlite3.connect("notes.db")\n    init_db(conn)\n    # your menu loop goes here\n\nif __name__ == "__main__":\n    main()',
+    checklist: ["Full CRUD implemented", "All queries parameterized", "Data persists across runs", "Table created automatically on first run"],
+    extensions: ["Add a 'completed' boolean column and filter by it", "Add search by keyword", "Add timestamps to each note"],
+    xpReward: 100
+  },
+  {
+    id: "proj-flask-backend",
+    title: "Flask Task API",
+    difficulty: "Advanced",
+    guidance: "Mostly independent",
+    minutes: 100,
+    skills: ["Flask", "REST", "JSON", "SQLite"],
+    prereq: ["l-flask"],
+    objective: "A small REST API built with Flask for managing tasks — the culmination of APIs, Databases, and Flask into one real backend application.",
+    requirements: [
+      "GET /api/tasks returns all tasks as JSON",
+      "POST /api/tasks creates a new task from a JSON request body",
+      "DELETE /api/tasks/<id> removes a task",
+      "Return an appropriate error status (404) for a task that doesn't exist",
+      "Never hardcode configuration — use environment variables for anything sensitive"
+    ],
+    structure: "app.py\n  GET  /api/tasks\n  POST /api/tasks\n  DELETE /api/tasks/<id>",
+    milestones: [
+      "Set up the Flask app and an in-memory (or SQLite-backed) task store",
+      "Implement GET /api/tasks",
+      "Implement POST /api/tasks with request validation",
+      "Implement DELETE /api/tasks/<id> with a proper 404 for missing tasks"
+    ],
+    hints: [
+      "Starting with an in-memory list is fine — swap in the SQLite pattern from the Databases lesson once the routes work.",
+      "request.get_json() reads a JSON request body; validate it has the fields you expect before using them.",
+      "Return (jsonify(...), status_code) as a tuple to control the HTTP status explicitly."
+    ],
+    starter: 'from flask import Flask, jsonify, request\n\napp = Flask(__name__)\ntasks = []\nnext_id = 1\n\n@app.route("/api/tasks", methods=["GET"])\ndef get_tasks():\n    return jsonify(tasks)\n\n@app.route("/api/tasks", methods=["POST"])\ndef create_task():\n    # your code here\n    pass\n\n@app.route("/api/tasks/<int:task_id>", methods=["DELETE"])\ndef delete_task(task_id):\n    # your code here\n    pass\n\nif __name__ == "__main__":\n    app.run(debug=True)',
+    checklist: ["GET/POST/DELETE all implemented", "Proper 404 for missing tasks", "Request bodies validated", "No hardcoded secrets/config"],
+    extensions: ["Persist tasks in SQLite instead of memory", "Add a PATCH route to mark a task complete", "Add basic API key authentication"],
+    xpReward: 130
+  },
+  {
+    id: "proj-gui-app",
+    title: "Expense Tracker GUI",
+    difficulty: "Advanced",
+    guidance: "Mostly independent",
+    minutes: 95,
+    skills: ["Tkinter", "File handling", "Functions", "OOP"],
+    prereq: ["l-tkinter"],
+    objective: "A desktop expense tracker with a real Tkinter interface — entry fields, a list view, and persistent storage — bringing GUI development together with earlier file-handling skills.",
+    requirements: [
+      "A form to enter a new expense (amount, category, description)",
+      "A visible, updating list of entered expenses",
+      "A running total displayed on screen",
+      "Expenses persist to a file and reload on the next run"
+    ],
+    structure: "expense_gui.py\n  ExpenseApp (organizes widgets + state)\n  add_expense()\n  refresh_list()\n  save_to_file() / load_from_file()",
+    milestones: [
+      "Build the entry form (amount, category, description) with a submit button",
+      "Display entered expenses in a list widget that updates live",
+      "Show and update a running total",
+      "Add file persistence so expenses survive restarting the app"
+    ],
+    hints: [
+      "A Listbox widget is a simple way to show a growing list of items.",
+      "Reuse the JSON load/save pattern from earlier file-handling projects for persistence.",
+      "Validate the amount field is a real number before accepting the entry, same as any other input validation."
+    ],
+    starter: 'import tkinter as tk\nimport json\n\nDATA_FILE = "expenses.json"\n\nclass ExpenseApp:\n    def __init__(self, root):\n        self.root = root\n        self.expenses = self.load_expenses()\n        # build your widgets here\n\n    def load_expenses(self):\n        try:\n            with open(DATA_FILE) as f:\n                return json.load(f)\n        except FileNotFoundError:\n            return []\n\n    def save_expenses(self):\n        with open(DATA_FILE, "w") as f:\n            json.dump(self.expenses, f)\n\nif __name__ == "__main__":\n    root = tk.Tk()\n    app = ExpenseApp(root)\n    root.mainloop()',
+    checklist: ["Form adds expenses correctly", "List view updates live", "Running total is accurate", "Data persists between runs"],
+    extensions: ["Add a category filter dropdown", "Add a delete button per expense", "Show a simple monthly breakdown"],
+    xpReward: 125
+  },
+
+  /* ---- Python Core depth pass: additional projects ---- */
+  {
+    id: "proj-file-organizer",
+    title: "File Organizer",
+    difficulty: "Beginner",
+    guidance: "Highly guided",
+    minutes: 55,
+    skills: ["pathlib", "shutil", "Automation"],
+    prereq: ["l-automation"],
+    objective: "A tool that organizes a messy folder by moving each file into a subfolder named after its extension.",
+    requirements: [
+      "List every file in a target folder (ignoring subfolders)",
+      "Determine each file's extension and target subfolder",
+      "Print a 'dry run' of planned moves before actually moving anything",
+      "Actually move files with shutil once the dry run looks correct"
+    ],
+    structure: "file_organizer.py\n  plan_moves(folder)\n  execute_moves(moves)",
+    milestones: [
+      "List files in the target folder with pathlib, skipping subfolders",
+      "Build a dry-run plan: {file: target_folder} without moving anything yet",
+      "Print the plan clearly for review",
+      "Add execute_moves() using shutil.move(), only after the plan looks right"
+    ],
+    hints: [
+      "Always test on a throwaway copy of a folder first — this script moves real files.",
+      "file.suffix gives you the extension including the dot; strip it with .lstrip('.') for a clean folder name.",
+      "Keep the dry-run and execute steps as two separate functions so you can review before committing."
+    ],
+    starter: 'from pathlib import Path\nimport shutil\n\ndef plan_moves(folder):\n    folder = Path(folder)\n    moves = {}\n    for file in folder.iterdir():\n        if file.is_file():\n            ext = file.suffix.lstrip(".") or "no_extension"\n            moves[file] = folder / ext\n    return moves\n\ndef execute_moves(moves):\n    for file, target_folder in moves.items():\n        target_folder.mkdir(exist_ok=True)\n        shutil.move(str(file), str(target_folder / file.name))\n\nif __name__ == "__main__":\n    moves = plan_moves(".")\n    for file, target in moves.items():\n        print(f"Would move {file.name} -> {target}")',
+    checklist: ["Dry run correctly shows planned moves", "Files actually move to the right subfolders", "Subfolders created automatically as needed", "Tested on a throwaway copy first"],
+    extensions: ["Add a --undo option that reverses the last run's moves", "Skip files already in a correctly-named folder", "Add a log of every move performed"],
+    xpReward: 65
+  },
+  {
+    id: "proj-backup-utility",
+    title: "Automated Backup Utility",
+    difficulty: "Intermediate",
+    guidance: "Semi-guided",
+    minutes: 70,
+    skills: ["shutil", "datetime", "logging", "Automation"],
+    prereq: ["l-automation-robust"],
+    objective: "A tool that backs up a folder to a timestamped destination, logging success or failure instead of just printing to the terminal.",
+    requirements: [
+      "Copy a source folder to a destination path that includes the current date",
+      "Log the outcome (success or failure with reason) using the logging module",
+      "Handle a missing source folder or a failed copy without crashing",
+      "Support running repeatedly without overwriting previous backups"
+    ],
+    structure: "backup_utility.py\n  create_backup(source, destination_root)\n  main()",
+    milestones: [
+      "Build the timestamped destination path using datetime",
+      "Implement the copy using shutil.copytree()",
+      "Wrap it in try/except with logging instead of print",
+      "Wire it up so running the script again creates a new, separate timestamped backup"
+    ],
+    hints: [
+      "shutil.copytree(source, destination) copies an entire folder tree.",
+      "datetime.now().strftime('%Y-%m-%d_%H-%M-%S') gives a filesystem-safe timestamp.",
+      "logging.basicConfig(filename='backup.log', level=logging.INFO) sets up file logging in one line."
+    ],
+    starter: 'import shutil\nimport logging\nfrom datetime import datetime\nfrom pathlib import Path\n\nlogging.basicConfig(filename="backup.log", level=logging.INFO)\n\ndef create_backup(source, destination_root):\n    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")\n    destination = Path(destination_root) / f"backup_{timestamp}"\n    try:\n        shutil.copytree(source, destination)\n        logging.info(f"Backup succeeded: {source} -> {destination}")\n    except Exception as e:\n        logging.error(f"Backup failed: {e}")\n\nif __name__ == "__main__":\n    create_backup("my_folder", "backups")',
+    checklist: ["Backup destination is timestamped", "Successes and failures are logged, not printed", "Missing source handled without crashing", "Repeated runs don't overwrite earlier backups"],
+    extensions: ["Add a --keep-last N option that deletes older backups beyond N", "Compress the backup into a .zip instead of a raw folder copy", "Add a summary report of backup size"],
+    xpReward: 80
+  },
+  {
+    id: "proj-browser-automation",
+    title: "Browser Automation Tool",
+    difficulty: "Advanced",
+    guidance: "Semi-guided",
+    minutes: 85,
+    skills: ["Selenium", "Error handling", "Waiting strategies"],
+    prereq: ["l-selenium"],
+    objective: "A small Selenium tool that opens a page you're permitted to automate (a local test page or your own site), reads specific content, and reports it — practicing real browser automation safely.",
+    requirements: [
+      "Open a browser and navigate to a page you own or are explicitly permitted to automate (e.g. localhost)",
+      "Locate at least one specific element and extract its text",
+      "Use an explicit wait for that element rather than a fixed sleep",
+      "Always quit the driver, even if an error occurs (use try/finally)"
+    ],
+    structure: "browser_tool.py\n  get_page_content(url, element_id)\n  main()",
+    milestones: [
+      "Set up the webdriver and navigate to the target page",
+      "Add an explicit WebDriverWait for the target element",
+      "Extract and return the element's text",
+      "Wrap everything in try/finally so driver.quit() always runs"
+    ],
+    hints: [
+      "Test against a local HTML file or your own localhost server first — this keeps the exercise fully authorized.",
+      "WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, element_id))) is the standard explicit-wait pattern.",
+      "A try/finally around the whole navigation ensures the browser always closes, even on failure."
+    ],
+    starter: 'from selenium import webdriver\nfrom selenium.webdriver.common.by import By\nfrom selenium.webdriver.support.ui import WebDriverWait\nfrom selenium.webdriver.support import expected_conditions as EC\n\ndef get_page_content(url, element_id):\n    driver = webdriver.Chrome()\n    try:\n        driver.get(url)\n        element = WebDriverWait(driver, 10).until(\n            EC.presence_of_element_located((By.ID, element_id))\n        )\n        return element.text\n    finally:\n        driver.quit()\n\nif __name__ == "__main__":\n    print(get_page_content("http://localhost:5000", "title"))',
+    checklist: ["Only targets a permitted/local page", "Uses an explicit wait, not a fixed sleep", "Extracts the target content correctly", "driver.quit() always runs, even on error"],
+    extensions: ["Extend it to extract a list of elements instead of just one", "Add command-line arguments (argparse) for the URL and element id", "Add retry logic for a transient element-not-found error"],
+    xpReward: 100
+  },
+  {
+    id: "proj-api-dashboard",
+    title: "Multi-Endpoint API Dashboard",
+    difficulty: "Advanced",
+    guidance: "Semi-guided",
+    minutes: 85,
+    skills: ["requests", "Error handling", "Retries", "JSON"],
+    prereq: ["l-api-client-robust"],
+    objective: "A command-line dashboard that pulls data from more than one API endpoint, combining the results into a single readable summary, with retry-aware error handling.",
+    requirements: [
+      "Fetch data from at least two different endpoints (real, mock, or sample responses)",
+      "Combine the results into a single summary output",
+      "Use the retry-on-5xx pattern from the API Client Robustness lesson",
+      "Handle one endpoint failing without preventing the working endpoint's data from being shown"
+    ],
+    structure: "api_dashboard.py\n  fetch_with_retry(url)\n  build_dashboard(urls)\n  main()",
+    milestones: [
+      "Reuse/adapt the get_with_retry() pattern from the lesson",
+      "Call it for each of at least two endpoints",
+      "Combine successful results; note failures clearly instead of crashing",
+      "Print a single readable dashboard summary"
+    ],
+    hints: [
+      "Wrap each endpoint fetch in its own try/except so one failure doesn't take down the whole dashboard.",
+      "A list of {name, url} dicts makes it easy to loop over multiple endpoints generically.",
+      "Reuse the exact retry pattern from the API Client Robustness lesson rather than rewriting it."
+    ],
+    starter: 'import time\nimport requests\n\ndef fetch_with_retry(url, retries=3, delay=1):\n    for attempt in range(retries):\n        try:\n            response = requests.get(url, timeout=5)\n            if response.status_code == 200:\n                return response.json()\n            if response.status_code >= 500:\n                time.sleep(delay)\n                continue\n            return None\n        except requests.exceptions.RequestException:\n            time.sleep(delay)\n    return None\n\ndef build_dashboard(endpoints):\n    results = {}\n    for name, url in endpoints.items():\n        results[name] = fetch_with_retry(url)\n    return results\n\nif __name__ == "__main__":\n    endpoints = {"weather": "https://api.example.com/weather", "news": "https://api.example.com/news"}\n    print(build_dashboard(endpoints))',
+    checklist: ["Pulls from at least 2 endpoints", "One failing endpoint doesn't crash the whole dashboard", "Retry logic reused from the lesson pattern", "Output is a clear, combined summary"],
+    extensions: ["Cache each endpoint's last successful result to a file", "Add a refresh interval that re-polls periodically", "Add color/formatting to distinguish successes from failures in the output"],
+    xpReward: 105
+  },
+  {
+    id: "proj-inventory-manager",
+    title: "Inventory Manager",
+    difficulty: "Advanced",
+    guidance: "Semi-guided",
+    minutes: 90,
+    skills: ["SQLite", "SQL", "JOIN", "CRUD"],
+    prereq: ["l-db-design"],
+    objective: "A CLI inventory manager backed by two related SQLite tables (products and categories), demonstrating real relational design instead of one flat table.",
+    requirements: [
+      "Create categories(id, name) and products(id, name, quantity, category_id) tables with a foreign key relationship",
+      "Support adding a category, adding a product to a category, and listing products with their category name via a JOIN",
+      "Support updating a product's quantity and deleting a product",
+      "All queries must be parameterized"
+    ],
+    structure: "inventory.py\n  init_db(conn)\n  add_category(conn, name)\n  add_product(conn, name, quantity, category_id)\n  list_products(conn)",
+    milestones: [
+      "Create both tables with the foreign key relationship",
+      "Implement add_category() and add_product()",
+      "Implement list_products() using a JOIN to show category names",
+      "Implement update and delete for products"
+    ],
+    hints: [
+      "Reuse the exact JOIN pattern from the Database Design lesson.",
+      "Every value coming from user input belongs in a ? placeholder.",
+      "Fetch the category list first so you can validate a category_id exists before inserting a product referencing it."
+    ],
+    starter: 'import sqlite3\n\ndef init_db(conn):\n    conn.execute("CREATE TABLE IF NOT EXISTS categories (id INTEGER PRIMARY KEY, name TEXT)")\n    conn.execute("CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY, name TEXT, quantity INTEGER, category_id INTEGER, FOREIGN KEY (category_id) REFERENCES categories(id))")\n    conn.commit()\n\ndef list_products(conn):\n    return conn.execute("""\n        SELECT products.name, products.quantity, categories.name\n        FROM products JOIN categories ON products.category_id = categories.id\n    """).fetchall()\n\ndef main():\n    conn = sqlite3.connect("inventory.db")\n    init_db(conn)\n    # your menu loop goes here\n\nif __name__ == "__main__":\n    main()',
+    checklist: ["Both tables created with correct relationship", "Products listed with their category name via JOIN", "Update/delete implemented", "All queries parameterized"],
+    extensions: ["Add a low-stock alert for products under a threshold quantity", "Add a total inventory value report (if products have a price field)", "Prevent deleting a category that still has products in it"],
+    xpReward: 110
+  },
+  {
+    id: "proj-flask-webapp",
+    title: "Flask Web App with Templates",
+    difficulty: "Advanced",
+    guidance: "Mostly independent",
+    minutes: 100,
+    skills: ["Flask", "Jinja", "Forms", "Sessions"],
+    prereq: ["l-flask-security"],
+    objective: "A small Flask web application (not just a JSON API) with real HTML pages, a submittable form, and a simple login using sessions and hashed passwords.",
+    requirements: [
+      "At least two rendered HTML pages using render_template and Jinja",
+      "A form that accepts and validates user input server-side",
+      "A basic login flow using session and password hashing (werkzeug.security)",
+      "A protected page that only shows its content to a 'logged-in' session"
+    ],
+    structure: "app.py\n  templates/\n    login.html\n    dashboard.html\n  /login  (GET, POST)\n  /dashboard  (session-protected)",
+    milestones: [
+      "Build the login page and form (GET shows the form, POST processes it)",
+      "Hash a known test password and verify it on login using werkzeug.security",
+      "Set session['user'] on successful login",
+      "Protect the dashboard route, redirecting to /login if no session is present"
+    ],
+    hints: [
+      "Reuse the exact hashing pattern from the Flask Security lesson — never store or compare plain-text passwords.",
+      "Check `if \"user\" not in session:` at the top of any protected route.",
+      "Keep the test account's hashed password as a module-level constant for this exercise — a real app would look it up from a database."
+    ],
+    starter: 'from flask import Flask, render_template, request, session, redirect, url_for\nfrom werkzeug.security import generate_password_hash, check_password_hash\n\napp = Flask(__name__)\napp.secret_key = "dev-only-change-in-production"\n\nSTORED_HASH = generate_password_hash("test-password")\n\n@app.route("/login", methods=["GET", "POST"])\ndef login():\n    if request.method == "POST":\n        if check_password_hash(STORED_HASH, request.form.get("password", "")):\n            session["user"] = "demo"\n            return redirect(url_for("dashboard"))\n        return render_template("login.html", error="Invalid password")\n    return render_template("login.html")\n\n@app.route("/dashboard")\ndef dashboard():\n    if "user" not in session:\n        return redirect(url_for("login"))\n    return render_template("dashboard.html", user=session["user"])\n\nif __name__ == "__main__":\n    app.run(debug=True)',
+    checklist: ["At least 2 rendered HTML pages", "Form input validated server-side", "Login uses hashed password comparison, never plain text", "Dashboard route protected by session check"],
+    extensions: ["Add a logout route that clears the session", "Add a signup form that hashes and 'stores' a new password", "Add flash messages for login errors"],
+    xpReward: 130
+  },
+  {
+    id: "proj-desktop-productivity",
+    title: "Desktop Productivity Tool",
+    difficulty: "Advanced",
+    guidance: "Independent",
+    minutes: 110,
+    skills: ["Tkinter", "OOP", "File handling", "Application architecture"],
+    prereq: ["l-tkinter-architecture"],
+    objective: "A multi-screen desktop to-do/notes application built with the class-per-screen Tkinter architecture, with persistent storage — the capstone GUI project combining everything from this section.",
+    requirements: [
+      "At least two distinct screens (e.g. a list view and an add/edit view), organized as separate classes",
+      "A central App class managing shared state and switching between screens",
+      "Data persists to a file (JSON) and reloads on the next run",
+      "Errors during file operations are caught and shown via a message box, not left to crash the app"
+    ],
+    structure: "productivity_app.py\n  ListScreen(tk.Frame)\n  AddItemScreen(tk.Frame)\n  App (manages shared state + screen switching)",
+    milestones: [
+      "Build the App class and one working screen (the list view) with load/save",
+      "Add the second screen (add/edit) and wire up switching between them",
+      "Make adding an item on one screen update the list shown on the other",
+      "Wrap file operations in try/except, showing a messagebox on failure"
+    ],
+    hints: [
+      "Reuse the exact App/Screen class pattern from the Organizing Larger GUI Applications lesson.",
+      "Store the shared item list as an attribute on the App instance, passed into each screen.",
+      "tkinter.messagebox.showerror('Error', str(e)) is a quick way to surface a caught exception to the user."
+    ],
+    starter: 'import tkinter as tk\nfrom tkinter import messagebox\nimport json\n\nDATA_FILE = "items.json"\n\nclass ListScreen(tk.Frame):\n    def __init__(self, parent, app):\n        super().__init__(parent)\n        self.app = app\n        # build your list display here\n\nclass AddItemScreen(tk.Frame):\n    def __init__(self, parent, app):\n        super().__init__(parent)\n        self.app = app\n        # build your add-item form here\n\nclass App:\n    def __init__(self, root):\n        self.root = root\n        self.items = self.load_items()\n        self.list_screen = ListScreen(root, self)\n        self.add_screen = AddItemScreen(root, self)\n        self.list_screen.pack()\n\n    def load_items(self):\n        try:\n            with open(DATA_FILE) as f:\n                return json.load(f)\n        except FileNotFoundError:\n            return []\n        except Exception as e:\n            messagebox.showerror("Error", str(e))\n            return []\n\nif __name__ == "__main__":\n    root = tk.Tk()\n    app = App(root)\n    root.mainloop()',
+    checklist: ["At least 2 screens, class-organized", "Central App manages shared state correctly", "Data persists between runs", "File errors caught and shown via messagebox, not crashing the app"],
+    extensions: ["Add a delete/complete action per item", "Add a search/filter field on the list screen", "Add a third screen for simple settings (e.g. sort order)"],
+    xpReward: 135
   }
 ];
 
@@ -3819,6 +5603,24 @@ const ACHIEVEMENTS_CATALOG = [
   { id: "ach-vulnerability-analyst", title: "Vulnerability Analyst", desc: "Complete a security reporting project", icon: "badge" },
   { id: "ach-security-automation", title: "Security Automation", desc: "Complete the HTTP Header Analyzer project", icon: "zap" },
   { id: "ach-ethical-hacker", title: "Ethical Hacker", desc: "Complete every available Ethical Hacking lesson", icon: "key" },
+  { id: "ach-basics-complete", title: "Python Basics Complete", desc: "Complete every lesson in the Python Basics section", icon: "zap" },
+  { id: "ach-development-complete", title: "Python Development Complete", desc: "Complete every lesson in the Python Development section", icon: "code" },
+  { id: "ach-automation-started", title: "Automation Started", desc: "Complete the Automation lesson", icon: "zap" },
+  { id: "ach-first-api-project", title: "First API Project", desc: "Complete the API Client project", icon: "trophy" },
+  { id: "ach-first-database-project", title: "First Database Project", desc: "Complete the Database-Backed Notes App project", icon: "trophy" },
+  { id: "ach-first-web-scraper", title: "First Web Scraper", desc: "Complete the Web Scraper project", icon: "trophy" },
+  { id: "ach-first-gui-app", title: "First GUI Application", desc: "Complete the Expense Tracker GUI project", icon: "trophy" },
+  { id: "ach-first-flask-app", title: "First Flask Application", desc: "Complete the Flask Task API project", icon: "trophy" },
+  { id: "ach-python-core-50", title: "Python Core 50%", desc: "Reach 50% completion of the full Python Core curriculum", icon: "zap" },
+  { id: "ach-python-core-75", title: "Python Core 75%", desc: "Reach 75% completion of the full Python Core curriculum", icon: "zap" },
+  { id: "ach-python-core-100", title: "Python Core 100%", desc: "Complete the entire expanded Python Core curriculum", icon: "zap" },
+  { id: "ach-automation-builder", title: "Automation Builder", desc: "Complete every Automation lesson", icon: "zap" },
+  { id: "ach-api-explorer", title: "API Explorer", desc: "Complete every APIs & REST lesson", icon: "code" },
+  { id: "ach-database-builder", title: "Database Builder", desc: "Complete every Databases lesson", icon: "trophy" },
+  { id: "ach-flask-developer", title: "Flask Developer", desc: "Complete every Web Backend lesson", icon: "code" },
+  { id: "ach-gui-builder", title: "GUI Builder", desc: "Complete every GUI Development lesson", icon: "trophy" },
+  { id: "ach-browser-automation-started", title: "Browser Automation Started", desc: "Complete the Selenium lesson", icon: "zap" },
+  { id: "ach-deployment-ready", title: "Deployment Ready", desc: "Complete every Deployment lesson", icon: "badge" },
 ];
 
 /* =========================================================================
@@ -3938,7 +5740,10 @@ const STORAGE_KEY = "pycademy-state-v1";
 function freshState() {
   return {
     onboarded: false,
-    profile: { name: "", email: "", experience: "", goals: [], pace: "", studyTime: "", ide: "", tracks: [], difficultyPref: "standard" },
+    profile: { name: "", fullName: "", email: "", experience: "", goals: [], pace: "", studyTime: "", ide: "", tracks: [], difficultyPref: "standard" },
+    knownEmails: [],          // frontend-only simulation of a users/accounts table, for the
+                               // "email already registered" check — see EMAIL_CHANGE_SERVICE
+    pendingEmailChange: null, // { newEmail, code, expiresAt } while a change is awaiting verification
     xp: 0,
     streak: 0,
     lastStudyDay: null,
@@ -4287,6 +6092,66 @@ function isValidEmail(v) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
+/* =========================================================================
+   EMAIL CHANGE SERVICE — frontend mock of a future backend.
+   This is the ONLY place that knows how a verification code is generated
+   and checked. When a real backend exists, replace the bodies of
+   requestEmailChange()/verifyEmailChangeCode() with calls to:
+     POST /auth/email-change/request
+     POST /auth/email-change/verify
+   and delete generateVerificationCode() — the backend becomes the sole
+   authority for code generation, sending, expiration, rate limiting, and
+   the authoritative "is this email already registered" check (which must
+   happen server-side, against the real accounts database, as part of the
+   same transaction that creates the verification challenge — not as a
+   separate earlier check, to avoid race conditions). Nothing UI-facing
+   should need to change shape when that swap happens.
+   ========================================================================= */
+
+const EMAIL_CHANGE_CODE_TTL_MS = 5 * 60 * 1000; // 5 minutes, mirrors a realistic backend TTL
+
+function generateVerificationCode() {
+  // Uppercase letters + digits, no ambiguous chars (0/O, 1/I) — dev-mode only.
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+// Simulates: POST /auth/email-change/request
+// A real backend would: normalize/validate the email, check the accounts
+// database for an existing match, and only then create+send a code.
+async function requestEmailChange({ newEmail, currentEmail, knownEmails }) {
+  const normalized = newEmail.trim().toLowerCase();
+  if (!isValidEmail(normalized)) {
+    return { ok: false, error: "Enter a valid email address." };
+  }
+  if (normalized === currentEmail.trim().toLowerCase()) {
+    return { ok: false, error: "That's already your current email address." };
+  }
+  if (knownEmails.includes(normalized)) {
+    return { ok: false, error: "That email is already associated with another account." };
+  }
+  // DEV MOCK ONLY: a real backend generates this server-side and never
+  // returns it to the frontend — it emails it instead.
+  const code = generateVerificationCode();
+  return {
+    ok: true,
+    newEmail: normalized,
+    code,
+    expiresAt: Date.now() + EMAIL_CHANGE_CODE_TTL_MS,
+    devNote: "Development mode: verification code generated locally.",
+  };
+}
+
+// Simulates: POST /auth/email-change/verify
+function verifyEmailChangeCode(enteredCode, pendingChange) {
+  if (!pendingChange) return { ok: false, error: "No email change is in progress." };
+  if (Date.now() > pendingChange.expiresAt) return { ok: false, error: "This code has expired. Request a new one." };
+  if (enteredCode.trim().toUpperCase() !== pendingChange.code) return { ok: false, error: "Incorrect code — check and try again." };
+  return { ok: true, newEmail: pendingChange.newEmail };
+}
+
 function PasswordField({ value, onChange, placeholder, autoComplete }) {
   const [show, setShow] = useState(false);
   return (
@@ -4358,15 +6223,15 @@ function AuthScreen({ onAuthed }) {
     if (AUTH_BYPASS_AUTO_LOGIN) {
       setError("");
       setLoading(true);
-      const fallbackName = name.trim() || "Learner";
+      const fallbackFullName = name.trim() || "Learner";
       const fallbackEmail = (email.trim() || "learner@example.com").toLowerCase();
       // Best-effort persistence in the background — doesn't block or fail the login.
       try {
-        const account = { name: fallbackName, email: fallbackEmail, password: password || "temp", createdAt: Date.now() };
+        const account = { name: fallbackFullName, email: fallbackEmail, password: password || "temp", createdAt: Date.now() };
         window.storage.set(AUTH_KEY, JSON.stringify(account), false).catch(() => {});
         window.storage.set(SESSION_KEY, JSON.stringify({ email: fallbackEmail }), false).catch(() => {});
       } catch (e) {}
-      onAuthed({ name: fallbackName, email: fallbackEmail, isNewAccount: mode === "signup" });
+      onAuthed({ fullName: fallbackFullName, email: fallbackEmail, isNewAccount: mode === "signup" });
       setLoading(false);
       return;
     }
@@ -4380,7 +6245,7 @@ function AuthScreen({ onAuthed }) {
         const account = { name: name.trim(), email: email.trim().toLowerCase(), password, createdAt: Date.now() };
         await window.storage.set(AUTH_KEY, JSON.stringify(account), false);
         await window.storage.set(SESSION_KEY, JSON.stringify({ email: account.email }), false);
-        onAuthed({ name: account.name, email: account.email, isNewAccount: true });
+        onAuthed({ fullName: account.name, email: account.email, isNewAccount: true });
       } else {
         const res = await window.storage.get(AUTH_KEY, false);
         const account = res && res.value ? JSON.parse(res.value) : null;
@@ -4390,7 +6255,7 @@ function AuthScreen({ onAuthed }) {
           return;
         }
         await window.storage.set(SESSION_KEY, JSON.stringify({ email: account.email }), false);
-        onAuthed({ name: account.name, email: account.email, isNewAccount: false });
+        onAuthed({ fullName: account.name, email: account.email, isNewAccount: false });
       }
     } catch (e) {
       setError("Something went wrong saving your session — please try again.");
@@ -5027,48 +6892,66 @@ function isLessonUnlocked(lesson, state) {
 
 function LearnHome({ state, openLesson }) {
   return (
-    <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
+    <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-8">
       <div>
         <h1 className="text-2xl font-semibold">Learn</h1>
-        <p className="text-slate-500 text-sm mt-1">Python Core — shared by every specialization.</p>
+        <p className="text-slate-500 text-sm mt-1">Python Core — a complete pathway on its own, and the shared foundation for every specialization.</p>
       </div>
-      {LEVELS.map((level) => {
-        const lessons = LESSONS.filter((l) => l.levelId === level.id);
-        if (lessons.length === 0) return null;
-        const doneCount = lessons.filter((l) => state.lessonStatus[l.id] === "completed").length;
+      {PYTHON_CORE_SECTIONS.map((section) => {
+        const sectionLevels = LEVELS.filter((l) => l.section === section.id);
+        const sectionLessons = LESSONS.filter((l) => sectionLevels.some((lv) => lv.id === l.levelId));
+        if (sectionLessons.length === 0) return null;
+        const sectionDone = sectionLessons.filter((l) => state.lessonStatus[l.id] === "completed").length;
         return (
-          <div key={level.id}>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-medium text-slate-400">Level {level.num} — {level.title}</h2>
-              <span className="text-xs text-slate-600">{doneCount}/{lessons.length} complete</span>
+          <div key={section.id} className="space-y-4">
+            <div className="flex items-end justify-between gap-3 flex-wrap border-b border-slate-800 pb-2">
+              <div>
+                <h2 className="text-base font-semibold text-slate-100">{section.title}</h2>
+                <p className="text-xs text-slate-500">{section.desc}</p>
+              </div>
+              <span className="text-xs text-slate-600 shrink-0">{sectionDone}/{sectionLessons.length} lessons complete</span>
             </div>
-            <div className="grid sm:grid-cols-2 gap-3">
-              {lessons.map((lesson) => {
-                const unlocked = isLessonUnlocked(lesson, state);
-                const status = state.lessonStatus[lesson.id];
-                return (
-                  <Card
-                    key={lesson.id}
-                    onClick={unlocked ? () => openLesson(lesson.id) : undefined}
-                    className={`p-4 ${!unlocked ? "opacity-50" : ""}`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          {status === "completed" ? <CheckCircle2 size={15} className="text-emerald-400" /> : unlocked ? <CircleDot size={15} className="text-cyan-400" /> : <Lock size={14} className="text-slate-600" />}
-                          <h3 className="font-medium text-sm">{lesson.title}</h3>
-                        </div>
-                        <p className="text-xs text-slate-500 line-clamp-2">{lesson.concept}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 mt-3">
-                      <Pill tone={difficultyTone(lesson.difficulty)}>{lesson.difficulty}</Pill>
-                      <Pill><Clock size={11} /> {lesson.minutes} min</Pill>
-                    </div>
-                  </Card>
-                );
-              })}
-            </div>
+
+            {sectionLevels.map((level) => {
+              const lessons = LESSONS.filter((l) => l.levelId === level.id);
+              if (lessons.length === 0) return null;
+              const doneCount = lessons.filter((l) => state.lessonStatus[l.id] === "completed").length;
+              return (
+                <div key={level.id}>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-sm font-medium text-slate-400">{level.title}</h3>
+                    <span className="text-xs text-slate-600">{doneCount}/{lessons.length} complete</span>
+                  </div>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {lessons.map((lesson) => {
+                      const unlocked = isLessonUnlocked(lesson, state);
+                      const status = state.lessonStatus[lesson.id];
+                      return (
+                        <Card
+                          key={lesson.id}
+                          onClick={unlocked ? () => openLesson(lesson.id) : undefined}
+                          className={`p-4 ${!unlocked ? "opacity-50" : ""}`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                {status === "completed" ? <CheckCircle2 size={15} className="text-emerald-400" /> : unlocked ? <CircleDot size={15} className="text-cyan-400" /> : <Lock size={14} className="text-slate-600" />}
+                                <h4 className="font-medium text-sm">{lesson.title}</h4>
+                              </div>
+                              <p className="text-xs text-slate-500 line-clamp-2">{lesson.concept}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 mt-3">
+                            <Pill tone={difficultyTone(lesson.difficulty)}>{lesson.difficulty}</Pill>
+                            <Pill><Clock size={11} /> {lesson.minutes} min</Pill>
+                          </div>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         );
       })}
@@ -7155,15 +9038,19 @@ function ProfileHome({ state, go, onLogout }) {
   const { level } = xpToLevel(state.xp);
   const earned = ACHIEVEMENTS_CATALOG.filter((a) => state.achievements.includes(a.id));
   const locked = ACHIEVEMENTS_CATALOG.filter((a) => !state.achievements.includes(a.id));
+  const displayName = state.profile.fullName || state.profile.name || "Learner";
 
   return (
     <div className="p-4 md:p-8 max-w-3xl mx-auto space-y-6">
       <Card className="p-5 flex items-center gap-4 flex-wrap">
         <div className="w-14 h-14 rounded-full bg-violet-950 border border-violet-800 flex items-center justify-center font-semibold text-violet-300">
-          {(state.profile.name || "?").charAt(0).toUpperCase()}
+          {displayName.charAt(0).toUpperCase()}
         </div>
         <div className="flex-1 min-w-[140px]">
-          <h1 className="text-lg font-semibold">{state.profile.name || "Learner"}</h1>
+          <h1 className="text-lg font-semibold">{displayName}</h1>
+          {state.profile.name && state.profile.fullName && state.profile.name !== state.profile.fullName && (
+            <p className="text-xs text-slate-500">Goes by "{state.profile.name}"</p>
+          )}
           <p className="text-xs text-slate-500">{state.profile.email ? `${state.profile.email} · ` : ""}{state.profile.experience} · Level {level} · {state.xp} XP</p>
         </div>
         <div className="flex gap-2">
@@ -7230,6 +9117,112 @@ function SettingsHome({ state, updateState, onLogout }) {
   const set = (patch) => updateState((s) => ({ ...s, settings: { ...s.settings, ...patch } }));
   const [resetConfirm, setResetConfirm] = useState(false);
 
+  // --- Change Email flow state (UI-only; all verification logic lives in
+  // requestEmailChange()/verifyEmailChangeCode() so it's a clean swap for a
+  // real backend later) ---
+  const [emailStep, setEmailStep] = useState("idle"); // idle | request | verify
+  const [newEmail, setNewEmail] = useState("");
+  const [confirmEmail, setConfirmEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [codeInput, setCodeInput] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailToast, setEmailToast] = useState(null); // { text }
+
+  useEffect(() => {
+    // Resume an in-flight (unexpired) change after a refresh; drop a stale one.
+    if (state.pendingEmailChange) {
+      if (Date.now() > state.pendingEmailChange.expiresAt) {
+        updateState((s) => ({ ...s, pendingEmailChange: null }));
+      } else {
+        setEmailStep("verify");
+      }
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  const showToast = (text) => {
+    setEmailToast(text);
+    setTimeout(() => setEmailToast(null), 3000);
+  };
+
+  const startChangeEmail = () => {
+    setEmailStep("request");
+    setNewEmail("");
+    setConfirmEmail("");
+    setEmailError("");
+  };
+
+  const submitNewEmail = async (e) => {
+    e.preventDefault();
+    setEmailError("");
+    if (!newEmail.trim() || !confirmEmail.trim()) { setEmailError("Enter and confirm your new email address."); return; }
+    if (!isValidEmail(newEmail.trim())) { setEmailError("Enter a valid email address."); return; }
+    if (newEmail.trim().toLowerCase() !== confirmEmail.trim().toLowerCase()) { setEmailError("Emails don't match."); return; }
+    setEmailLoading(true);
+    const result = await requestEmailChange({ newEmail, currentEmail: state.profile.email || "", knownEmails: state.knownEmails });
+    setEmailLoading(false);
+    if (!result.ok) { setEmailError(result.error); return; }
+    updateState((s) => ({ ...s, pendingEmailChange: { newEmail: result.newEmail, code: result.code, expiresAt: result.expiresAt } }));
+    setCodeInput("");
+    setCodeError("");
+    setEmailStep("verify");
+  };
+
+  const resendCode = async () => {
+    if (!state.pendingEmailChange) return;
+    setEmailLoading(true);
+    const result = await requestEmailChange({ newEmail: state.pendingEmailChange.newEmail, currentEmail: state.profile.email || "", knownEmails: state.knownEmails });
+    setEmailLoading(false);
+    if (!result.ok) { setCodeError(result.error); return; }
+    updateState((s) => ({ ...s, pendingEmailChange: { newEmail: result.newEmail, code: result.code, expiresAt: result.expiresAt } }));
+    setCodeInput("");
+    setCodeError("");
+    showToast("New verification code generated.");
+  };
+
+  const submitVerifyCode = (e) => {
+    e.preventDefault();
+    setCodeError("");
+    const result = verifyEmailChangeCode(codeInput, state.pendingEmailChange);
+    if (!result.ok) { setCodeError(result.error); return; }
+    updateState((s) => {
+      const oldEmail = (s.profile.email || "").toLowerCase();
+      const updatedKnown = s.knownEmails.filter((e) => e !== oldEmail);
+      if (!updatedKnown.includes(result.newEmail)) updatedKnown.push(result.newEmail);
+      return { ...s, profile: { ...s.profile, email: result.newEmail }, knownEmails: updatedKnown, pendingEmailChange: null };
+    });
+    // Keep the login-check record (AUTH_KEY) and active session (SESSION_KEY)
+    // in sync so a future login attempt uses the new email as the account's
+    // current identity — same single source of truth, just two persisted
+    // copies of it until a real backend replaces both with a database.
+    (async () => {
+      try {
+        const res = await window.storage.get(AUTH_KEY, false);
+        const account = res && res.value ? JSON.parse(res.value) : null;
+        if (account) {
+          await window.storage.set(AUTH_KEY, JSON.stringify({ ...account, email: result.newEmail }), false);
+          await window.storage.set(SESSION_KEY, JSON.stringify({ email: result.newEmail }), false);
+        }
+      } catch (e) {}
+    })();
+    setEmailStep("idle");
+    setNewEmail("");
+    setConfirmEmail("");
+    setCodeInput("");
+    showToast("Email address updated.");
+  };
+
+  const cancelEmailChange = () => {
+    updateState((s) => ({ ...s, pendingEmailChange: null }));
+    setEmailStep("idle");
+    setNewEmail("");
+    setConfirmEmail("");
+    setCodeInput("");
+    setEmailError("");
+    setCodeError("");
+  };
+
   const doReset = async () => {
     try { await window.storage.delete(STORAGE_KEY, false); } catch (e) {}
     window.location.reload();
@@ -7291,8 +9284,68 @@ function SettingsHome({ state, updateState, onLogout }) {
 
       <Card className="p-5">
         <h3 className="font-medium text-sm mb-1">Account</h3>
-        <p className="text-xs text-slate-500 mb-3">{state.profile.email || "No email on file"}</p>
-        <Button variant="secondary" size="sm" onClick={onLogout}><LogOut size={14} /> Log out</Button>
+
+        {emailStep === "idle" && (
+          <>
+            <p className="text-xs text-slate-500 mb-3">{state.profile.email || "No email on file"}</p>
+            <div className="flex gap-2 flex-wrap">
+              <Button variant="secondary" size="sm" onClick={startChangeEmail}><Mail size={14} /> Change Email</Button>
+              <Button variant="ghost" size="sm" onClick={onLogout}><LogOut size={14} /> Log out</Button>
+            </div>
+          </>
+        )}
+
+        {emailStep === "request" && (
+          <form onSubmit={submitNewEmail}>
+            <p className="text-xs text-slate-500 mb-3">Current email: <span className="text-slate-300">{state.profile.email || "none"}</span></p>
+            <div className="space-y-2.5 mb-3">
+              <div className="relative">
+                <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="New email address" className="w-full bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-cyan-500" />
+              </div>
+              <div className="relative">
+                <Mail size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <input type="email" value={confirmEmail} onChange={(e) => setConfirmEmail(e.target.value)} placeholder="Confirm new email address" className="w-full bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-cyan-500" />
+              </div>
+            </div>
+            {emailError && <p className="text-xs text-rose-400 mb-3">{emailError}</p>}
+            <div className="flex gap-2">
+              <Button type="submit" size="sm" disabled={emailLoading}>
+                {emailLoading ? <RefreshCw size={13} className="animate-spin" /> : <ArrowRight size={13} />} Send verification code
+              </Button>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setEmailStep("idle")}>Cancel</Button>
+            </div>
+          </form>
+        )}
+
+        {emailStep === "verify" && state.pendingEmailChange && (
+          <form onSubmit={submitVerifyCode}>
+            <p className="text-sm text-slate-300 mb-1">Verify your new email</p>
+            <p className="text-xs text-slate-500 mb-3">We simulated sending a verification code to <span className="text-slate-300">{state.pendingEmailChange.newEmail}</span>.</p>
+
+            <div className="flex items-start gap-2 bg-amber-950/30 border border-amber-900/50 rounded-lg p-2.5 mb-3">
+              <FlaskConical size={13} className="text-amber-400 mt-0.5 shrink-0" />
+              <p className="text-xs text-amber-200">Development mode: verification code generated locally: <span className="font-mono font-semibold">{state.pendingEmailChange.code}</span>. This box goes away once a real email service is connected.</p>
+            </div>
+
+            <input
+              value={codeInput}
+              onChange={(e) => setCodeInput(e.target.value.toUpperCase().slice(0, 6))}
+              placeholder="6-character code"
+              maxLength={6}
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2.5 text-sm font-mono tracking-[0.3em] text-center focus:outline-none focus:border-cyan-500 mb-3"
+            />
+            {codeError && <p className="text-xs text-rose-400 mb-3">{codeError}</p>}
+
+            <div className="flex gap-2 flex-wrap">
+              <Button type="submit" size="sm" disabled={codeInput.length !== 6}><Check size={13} /> Verify Email</Button>
+              <Button type="button" variant="secondary" size="sm" onClick={resendCode} disabled={emailLoading}>
+                {emailLoading ? <RefreshCw size={13} className="animate-spin" /> : <RefreshCw size={13} />} Resend code
+              </Button>
+              <Button type="button" variant="ghost" size="sm" onClick={cancelEmailChange}>Cancel</Button>
+            </div>
+          </form>
+        )}
       </Card>
 
       <Card className="p-5 border-rose-900/50">
@@ -7307,6 +9360,13 @@ function SettingsHome({ state, updateState, onLogout }) {
           </div>
         )}
       </Card>
+
+      {emailToast && (
+        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-slate-900 border border-emerald-800 text-slate-100 text-sm px-4 py-3 rounded-lg shadow-lg">
+          <CheckCircle2 size={16} className="text-emerald-400" />
+          {emailToast}
+        </div>
+      )}
     </div>
   );
 }
@@ -7353,6 +9413,40 @@ function checkAchievements(s) {
   if (s.projectStatus["proj-cy-report"] === "completed") unlocked.add("ach-vulnerability-analyst");
   if (s.projectStatus["proj-hk-http-headers"] === "completed") unlocked.add("ach-security-automation");
   if (HACKING_LESSONS.every((l) => s.lessonStatus[l.id] === "completed")) unlocked.add("ach-ethical-hacker");
+
+  // Python Core expansion achievements
+  const basicsLessons = LESSONS.filter((l) => (LEVELS.find((lv) => lv.id === l.levelId) || {}).section === "basics");
+  const developmentLessons = LESSONS.filter((l) => (LEVELS.find((lv) => lv.id === l.levelId) || {}).section === "development");
+  if (basicsLessons.length && basicsLessons.every((l) => s.lessonStatus[l.id] === "completed")) unlocked.add("ach-basics-complete");
+  if (developmentLessons.length && developmentLessons.every((l) => s.lessonStatus[l.id] === "completed")) unlocked.add("ach-development-complete");
+  if (s.lessonStatus["l-automation"] === "completed") unlocked.add("ach-automation-started");
+  if (s.projectStatus["proj-api-client"] === "completed") unlocked.add("ach-first-api-project");
+  if (s.projectStatus["proj-database-app"] === "completed") unlocked.add("ach-first-database-project");
+  if (s.projectStatus["proj-web-scraper"] === "completed") unlocked.add("ach-first-web-scraper");
+  if (s.projectStatus["proj-gui-app"] === "completed") unlocked.add("ach-first-gui-app");
+  if (s.projectStatus["proj-flask-backend"] === "completed") unlocked.add("ach-first-flask-app");
+  const pythonCorePct = LESSONS.length ? LESSONS.filter((l) => s.lessonStatus[l.id] === "completed").length / LESSONS.length : 0;
+  if (pythonCorePct >= 0.5) unlocked.add("ach-python-core-50");
+  if (pythonCorePct >= 0.75) unlocked.add("ach-python-core-75");
+  if (pythonCorePct >= 1) unlocked.add("ach-python-core-100");
+
+  const lessonsInSection = (sectionId) => {
+    const ids = LEVELS.filter((lv) => lv.section === sectionId).map((lv) => lv.id);
+    return LESSONS.filter((l) => ids.includes(l.levelId));
+  };
+  const automationLessons = lessonsInSection("automation");
+  const apiLessons = lessonsInSection("apis");
+  const dbLessons = lessonsInSection("databases");
+  const backendLessons = lessonsInSection("backend");
+  const guiLessons = lessonsInSection("gui");
+  const deploymentLessons = lessonsInSection("deployment");
+  if (automationLessons.length && automationLessons.every((l) => s.lessonStatus[l.id] === "completed")) unlocked.add("ach-automation-builder");
+  if (apiLessons.length && apiLessons.every((l) => s.lessonStatus[l.id] === "completed")) unlocked.add("ach-api-explorer");
+  if (dbLessons.length && dbLessons.every((l) => s.lessonStatus[l.id] === "completed")) unlocked.add("ach-database-builder");
+  if (backendLessons.length && backendLessons.every((l) => s.lessonStatus[l.id] === "completed")) unlocked.add("ach-flask-developer");
+  if (guiLessons.length && guiLessons.every((l) => s.lessonStatus[l.id] === "completed")) unlocked.add("ach-gui-builder");
+  if (s.lessonStatus["l-selenium"] === "completed") unlocked.add("ach-browser-automation-started");
+  if (deploymentLessons.length && deploymentLessons.every((l) => s.lessonStatus[l.id] === "completed")) unlocked.add("ach-deployment-ready");
 
   if (unlocked.size === s.achievements.length) return s;
   const gained = [...unlocked].filter((id) => !s.achievements.includes(id));
@@ -7439,13 +9533,17 @@ export default function App() {
 
   const handleSearch = (q) => go("reference", { q });
 
-  const handleAuthed = ({ name, email }) => {
+  const handleAuthed = ({ fullName, email }) => {
     setAuthed(true);
-    // Onboarding (the "Where do you want Python to take you?" flow) now runs
-    // normally for any account that hasn't completed it yet — this just
-    // carries the name/email from the auth form into the profile so
-    // onboarding can greet them by name.
-    updateState((s) => ({ ...s, profile: { ...s.profile, name: s.profile.name || name, email } }));
+    // fullName (from Sign Up) and profile.name (the "What should we call you?"
+    // preferred/display name from onboarding) are intentionally kept separate.
+    // profile.name is NOT set here — onboarding starts empty and the user
+    // chooses their own display name, used for the dashboard greeting.
+    updateState((s) => {
+      const emailLower = email.trim().toLowerCase();
+      const known = s.knownEmails.includes(emailLower) ? s.knownEmails : [...s.knownEmails, emailLower];
+      return { ...s, profile: { ...s.profile, fullName: s.profile.fullName || fullName, email: emailLower }, knownEmails: known };
+    });
   };
 
   const handleLogout = async () => {
