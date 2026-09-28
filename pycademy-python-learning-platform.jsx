@@ -9,6 +9,8 @@ import {
   BadgeCheck, Cpu, FlaskConical, Award, Eye, EyeOff, Mail, LogOut, KeyRound,
   ShieldQuestion, ListChecks, GitBranch, GitCommit, GitPullRequest, FileText
 } from "lucide-react";
+import { LandingPage as PublicLandingPage } from "./landing-page/src/routes/index.tsx";
+
 
 /* =========================================================================
    CONTENT LAYER — curriculum, exercises, reference, projects
@@ -6177,7 +6179,7 @@ function PasswordField({ value, onChange, placeholder, autoComplete }) {
   );
 }
 
-function AuthScreen({ onAuthed }) {
+function AuthScreen({ onAuthed, initialMode, onBack }) {
   const [mode, setMode] = useState("login"); // login | signup | forgot | forgot_sent
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -6191,7 +6193,7 @@ function AuthScreen({ onAuthed }) {
   useEffect(() => {
     if (AUTH_BYPASS_AUTO_LOGIN) {
       // Skip the storage round-trip entirely — nothing to block on.
-      setMode("signup");
+      setMode(initialMode || "signup");
       setCheckedExisting(true);
       return;
     }
@@ -6199,9 +6201,9 @@ function AuthScreen({ onAuthed }) {
       const res = await withTimeout(window.storage.get(AUTH_KEY, false));
       if (res && res.value) {
         setHasAccount(true);
-        setMode("login");
+        setMode(initialMode || "login");
       } else {
-        setMode("signup");
+        setMode(initialMode || "signup");
       }
       setCheckedExisting(true);
     })();
@@ -6274,11 +6276,16 @@ function AuthScreen({ onAuthed }) {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
+        {onBack && (
+          <button onClick={onBack} className="flex items-center gap-1 text-xs text-slate-500 hover:text-slate-300 mb-4">
+            <ChevronLeft size={14} /> Back to homepage
+          </button>
+        )}
         <div className="flex items-center gap-2 mb-8 justify-center">
           <div className="w-9 h-9 rounded-lg bg-cyan-950 border border-cyan-800 flex items-center justify-center">
             <Terminal className="text-cyan-400" size={18} />
           </div>
-          <span className="font-semibold text-lg tracking-tight">Pycademy</span>
+          <span className="font-semibold text-lg tracking-tight">PyCademy</span>
         </div>
 
         <Card className="p-6">
@@ -6334,7 +6341,7 @@ function AuthScreen({ onAuthed }) {
               </Button>
 
               <p className="text-center text-xs text-slate-500">
-                {mode === "signup" ? "Already have an account?" : "New to Pycademy?"}{" "}
+                {mode === "signup" ? "Already have an account?" : "New to PyCademy?"}{" "}
                 <button type="button" onClick={() => { setMode(mode === "signup" ? "login" : "signup"); setError(""); }} className="text-cyan-400 hover:underline">
                   {mode === "signup" ? "Log in" : "Sign up"}
                 </button>
@@ -6379,8 +6386,8 @@ function Onboarding({ onComplete, initialName }) {
               <div className="w-14 h-14 rounded-xl bg-cyan-950 border border-cyan-800 flex items-center justify-center mx-auto mb-5">
                 <Terminal className="text-cyan-400" size={26} />
               </div>
-              <h1 className="text-2xl font-semibold mb-2">Welcome to Pycademy</h1>
-              <p className="text-slate-400 mb-5 leading-relaxed">A learning system that adapts to you. Pycademy is built around four tracks:</p>
+              <h1 className="text-2xl font-semibold mb-2">Welcome to PyCademy</h1>
+              <p className="text-slate-400 mb-5 leading-relaxed">A learning system that adapts to you. PyCademy is built around four tracks:</p>
               <div className="grid grid-cols-2 gap-2 mb-6 text-left">
                 <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-950 border border-slate-800"><Code2 size={15} className="text-cyan-400 shrink-0" /><span className="text-xs">Python Core</span></div>
                 <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-950 border border-slate-800"><ShieldCheck size={15} className="text-violet-400 shrink-0" /><span className="text-xs">Cybersecurity</span></div>
@@ -6536,7 +6543,7 @@ function Onboarding({ onComplete, initialName }) {
                 <span className="text-slate-200">{form.studyTime.split(" (")[0]}</span> and {form.difficultyPref} difficulty. Python Core comes first — your specializations stay unlocked to explore any time, and adapt in depth as you build the fundamentals.
               </p>
               <Button size="lg" className="w-full" onClick={() => onComplete(form)}>
-                Enter Pycademy <Sparkles size={16} />
+                Enter PyCademy <Sparkles size={16} />
               </Button>
             </div>
           )}
@@ -6582,7 +6589,7 @@ function Sidebar({ view, go }) {
         <div className="w-8 h-8 rounded-lg bg-cyan-950 border border-cyan-800 flex items-center justify-center">
           <Terminal className="text-cyan-400" size={16} />
         </div>
-        <span className="font-semibold tracking-tight">Pycademy</span>
+        <span className="font-semibold tracking-tight">PyCademy</span>
       </div>
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5">
         {NAV_ITEMS.map(({ id, label, icon: Icon }) => (
@@ -6844,7 +6851,7 @@ function Dashboard({ state, go, openLesson, openProject }) {
           ) : (
             <div className="space-y-2.5">
               {weakList.map(([id, info]) => {
-                const lesson = LESSONS.find((l) => l.id === id);
+                const lesson = ALL_LESSONS.find((l) => l.id === id);
                 return (
                   <div key={id} className="flex items-center justify-between text-sm">
                     <span className="text-slate-300">{lesson ? lesson.title : id}</span>
@@ -7337,7 +7344,7 @@ function ExercisePage({ exercise, state, updateState, go }) {
       const prev = s.weakAreas[exercise.topicId] || { fails: 0 };
       return {
         ...s,
-        weakAreas: { ...s.weakAreas, [exercise.topicId]: { fails: prev.fails + 1, lastFail: Date.now(), label: (LESSONS.find((l) => l.id === exercise.topicId) || {}).title } },
+        weakAreas: { ...s.weakAreas, [exercise.topicId]: { fails: prev.fails + 1, lastFail: Date.now(), label: (ALL_LESSONS.find((l) => l.id === exercise.topicId) || {}).title } },
         revisionQueue: s.revisionQueue.includes(exercise.topicId) ? s.revisionQueue : [...s.revisionQueue, exercise.topicId],
       };
     });
@@ -8019,7 +8026,7 @@ function timeAgo(ts) {
 
 function RevisionHome({ state, updateState, go }) {
   const items = state.revisionQueue.map((id) => {
-    const lesson = LESSONS.find((l) => l.id === id);
+    const lesson = ALL_LESSONS.find((l) => l.id === id);
     const weak = state.weakAreas[id];
     const fails = weak ? weak.fails : 0;
     const status = fails >= 2 ? "Weak" : fails === 1 ? "Needs review" : "Almost mastered";
@@ -8044,7 +8051,7 @@ function RevisionHome({ state, updateState, go }) {
         xp: s.xp + 20,
         revisionMasteredCount: (s.revisionMasteredCount || 0) + 1,
       };
-      const lesson = LESSONS.find((l) => l.id === id);
+      const lesson = ALL_LESSONS.find((l) => l.id === id);
       next = logActivity(next, `Mastered revision topic: ${lesson ? lesson.title : id}`, "revision");
       return next;
     });
@@ -8098,7 +8105,7 @@ function RevisionHome({ state, updateState, go }) {
 }
 
 function RevisionSession({ topicId, state, updateState, go }) {
-  const lesson = LESSONS.find((l) => l.id === topicId);
+  const lesson = ALL_LESSONS.find((l) => l.id === topicId);
   const easy = EXERCISES.find((e) => e.topicId === topicId && e.difficulty === "Easy" && !e.variantOf) || EXERCISES.find((e) => e.topicId === topicId);
   const medium = EXERCISES.find((e) => e.topicId === topicId && e.variantOf) || easy;
   const [step, setStep] = useState(0);
@@ -9458,11 +9465,17 @@ function checkAchievements(s) {
   return next;
 }
 
+/* =========================================================================
+   PUBLIC LANDING PAGE
+  ========================================================================= */
+
 export default function App() {
   const [state, setState] = useState(freshState());
   const [loaded, setLoaded] = useState(false);
   const [authed, setAuthed] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
+  const [showLanding, setShowLanding] = useState(true);
+  const [authInitialMode, setAuthInitialMode] = useState(null);
   const [view, setView] = useState({ name: "dashboard", params: {} });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const saveTimer = useRef(null);
@@ -9581,7 +9594,15 @@ export default function App() {
   }
 
   if (!authed) {
-    return <AuthScreen onAuthed={handleAuthed} />;
+    if (showLanding) {
+      return (
+        <PublicLandingPage
+          onLogin={() => { setAuthInitialMode("login"); setShowLanding(false); }}
+          onSignup={() => { setAuthInitialMode("signup"); setShowLanding(false); }}
+        />
+      );
+    }
+    return <AuthScreen onAuthed={handleAuthed} initialMode={authInitialMode} onBack={() => setShowLanding(true)} />;
   }
 
   if (!state.onboarded) {
