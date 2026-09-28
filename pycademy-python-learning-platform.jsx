@@ -9,7 +9,7 @@ import {
   BadgeCheck, Cpu, FlaskConical, Award, Eye, EyeOff, Mail, LogOut, KeyRound,
   ShieldQuestion, ListChecks, GitBranch, GitCommit, GitPullRequest, FileText
 } from "lucide-react";
-import { LandingPage as PublicLandingPage } from "./landing-page/src/routes/index.tsx";
+import { LandingPage as PublicLandingPage } from "./components/LandingPage.jsx";
 
 
 /* =========================================================================

@@ -1,0 +1,345 @@
+Task 1: Audit PyCademy project integration
+Completed
+I now have all the evidence needed. Let me compile the report.
+PyCademy Workspace Audit Report
+1. Objective
+Comprehensive read-only audit of the dual-app PyCademy workspace to identify the root causes of styling loss and broken navigation when linking the Lovable landing page to the main app, and to recommend a safe consolidation architecture.
+2. Repository & Git Structure
+Aspect	Finding
+Root repo	https://github.com/Jo20shua/PyCademy.git, branch main, commit 0712abc ("Backup before fixing")
+landing-page	Tracked as a git submodule (mode 160000, commit ce2d839) pointing to https://github.com/roguemedia101/practice-pulse-academy.git
+Submodule problem	There is no .gitmodules file in the root repo. Git sees the 160000 entry in the index but has no mapping for it. git submodule status returns fatal: no submodule mapping found. The landing-page/ directory currently exists as a full nested git clone, but git cannot manage it as a proper submodule.
+Worktrees	Only one worktree exists (the main checkout). No secondary worktrees detected.
+dist/	The dist/ directory exists but is empty. It is also listed in .gitignore (line 83). The deploy workflow uploads ./dist but nothing is being built into it (see Section 6).
+3. Two Completely Separate App Architectures
+Root App (Main Learning Platform)
+Property	Value	File
+Framework	React (latest -> resolved 19.3.0)	c:\...\package.json
+Build tool	Vite 8.3.0	c:\...\package.json
+Styling	Tailwind CSS 3.4.19 via PostCSS	c:\...\postcss.config.js, c:\...\tailwind.config.js
+Entrypoint	c:\...\index.html -> c:\...\main.jsx -> c:\...\pycademy-python-learning-platform.jsx
+CSS entry	c:\...\styles.css (imports Tailwind directives + landing-page CSS)
+Base path	/PyCademy/	c:\...\vite.config.js
+Router	None. Uses useState view-switching (view.name + go() function)
+Size	Single 9,696-line JSX monolith
+Landing-Page (Lovable/TanStack Start SSR App)
+Property	Value	File
+Framework	React 19.2.0, TanStack Start 1.168.32, TanStack Router 1.170.18	c:\...\landing-page\package.json
+Build tool	Vite 8.1.5 with @lovable.dev/vite-tanstack-config@^2.23.1	c:\...\landing-page\vite.config.ts
+Styling	Tailwind CSS 4.2.1 via @tailwindcss/vite plugin (v4 native, NOT PostCSS)	c:\...\landing-page\package.json
+CSS	Custom properties in c:\...\landing-page\src\styles.css using @layer base/@layer components with @apply
+SSR	Full SSR with Nitro server, CSRF middleware, error pages	c:\...\landing-page\src\server.ts, c:\...\landing-page\src\start.ts
+shadcn/ui	Full shadcn/ui (new-york style) with 40+ Radix UI components	c:\...\landing-page\components.json
+Lovable sync	Connected to Lovable; AGENTS.md warns against force-pushing	c:\...\landing-page\AGENTS.md
+4. Root Causes of Failure
+CAUSE 1: Tailwind Version Collision (Styling Loss)
+The root app uses Tailwind CSS v3 (PostCSS-based, @tailwind base/components/utilities directives).
+The landing page uses Tailwind CSS v4 (Vite plugin-based, @layer base/@layer components with CSS-native syntax, oklch colors).
+Line 1 of c:\...\styles.css does @import "./landing-page/src/styles.css", pulling the landing page's v4 CSS into the root app's v3 PostCSS pipeline.
+Tailwind v4's @layer directives and oklch custom properties are processed by v3's PostCSS plugin, which does not understand them. This causes unpredictable cascade ordering, lost utility classes, and broken custom properties -- the exact "styling loss" reported.
+CAUSE 2: Cross-Boundary Component Import (Navigation Breaks)
+Line 12 of c:\...\pycademy-python-learning-platform.jsx does:
+import { LandingPage as PublicLandingPage } from "./landing-page/src/routes/index.tsx";
+This imports a TanStack Router route component (which uses createFileRoute) directly into the root app's plain React tree. The component depends on:
+TanStack Router context (Route.useRouteContext() in __root.tsx)
+The Button component from shadcn/ui (which uses class-variance-authority, @radix-ui/react-slot)
+Tailwind v4 utility classes
+The root app has none of these dependencies installed. The import works only because Vite resolves it from the landing-page/node_modules directory at dev time, creating a fragile cross-boundary resolution. In production builds, this fails because:
+The root vite.config.js has no React plugin configured (line 1-6 show only base is set)
+TSX files from the landing page cannot be transpiled without the TypeScript/React plugin
+Dependencies like class-variance-authority, @radix-ui/react-slot, cmdk, etc. are not in the root node_modules
+CAUSE 3: Missing Vite React Plugin in Root Config
+c:\...\vite.config.js contains only base: '/PyCademy/'. It does not import or configure @vitejs/plugin-react. Despite having the plugin as a dependency, it is never activated. This means JSX transform relies on implicit/default behavior, and TSX imports from the landing page are not handled.
+CAUSE 4: The Navigation Model is Incompatible
+The landing page's LandingPage component accepts onLogin and onSignup callbacks (line 258 of index.tsx).
+The root app wires these (lines 9599-9601) to toggle showLanding state and switch to AuthScreen.
+The landing page's own "Create Account" and "Log In" buttons in the hero section (lines 356-361) do not use onLogin/onSignup -- they call scrollTo("final") as a fallback. Only the nav-bar buttons (lines 322-323) and mobile menu buttons (lines 336-337) properly use the callbacks.
+When navigation "stopped working," it was likely because the build started failing on the cross-boundary TSX import, producing a broken bundle.
+CAUSE 5: Deploy Workflow Builds Root App Only
+c:\...\.github\workflows\deploy.yml runs npm ci and npm run build at the repository root.
+This builds only the root Vite app. The landing-page's TanStack Start/Nitro SSR build is never executed in CI.
+The dist/ directory is empty, confirming builds are not succeeding or not being run locally either.
+5. Dependency Version Conflicts
+Package	Root App	Landing Page	Risk
+React	19.3.0 (latest)	^19.2.0	Minor mismatch; OK if single copy resolves
+Tailwind	3.4.19 (PostCSS)	4.2.1 (Vite plugin)	BREAKING -- entirely different architectures
+Vite	8.3.0	8.1.5	Compatible
+lucide-react	0.468.0	0.575.0	Dual copies; icon API likely compatible
+@vitejs/plugin-react	6.1.1 (installed, unused)	5.2.0	Not conflicting since different node_modules
+6. Current File/Navigation Flow
+User visits site
+  -> index.html loads main.jsx
+    -> main.jsx renders <App /> from pycademy-python-learning-platform.jsx
+      -> If !authed && showLanding:
+           renders <PublicLandingPage> (imported from landing-page/src/routes/index.tsx)
+           onLogin/onSignup callbacks -> setShowLanding(false) -> shows AuthScreen
+      -> If !authed && !showLanding:
+           renders <AuthScreen>
+      -> If authed:
+           renders sidebar + main content via view.name state switching
+The landing page's LandingPage component is used purely as a visual React component -- its TanStack Router route definition (createFileRoute) is ignored. Only the JSX function body matters.
+7. Recommended Consolidation Architecture
+Strategy: Extract the LandingPage as a standalone component in the root app's tree, eliminating the cross-boundary import and Tailwind version conflict.
+Target Tree
+c:\Users\joshu\.vscode\Python Learning Claude\
+  ├── index.html                    (unchanged)
+  ├── main.jsx                      (unchanged)
+  ├── pycademy-python-learning-platform.jsx  (import path updated)
+  ├── vite.config.js                (add React plugin)
+  ├── package.json                  (add needed deps)
+  ├── tailwind.config.js            (unchanged)
+  ├── postcss.config.js             (unchanged)
+  ├── styles.css                    (remove @import of landing-page CSS; inline converted styles)
+  ├── landing-page-styles.css       (NEW: landing page CSS converted to Tailwind v3 / vanilla CSS)
+  ├── components/
+  │   ├── LandingPage.jsx           (NEW: extracted from index.tsx, de-TanStack'd)
+  │   └── ui/
+  │       └── Button.jsx            (NEW: extracted from shadcn, simplified)
+  ├── landing-page/                 (kept as-is for Lovable sync, NOT imported at build time)
+  │   └── ... (unchanged, remains its own git repo)
+  ├── .github/workflows/deploy.yml  (updated to build correctly)
+  └── dist/                         (Vite output)
+Migration Sequence (7 Steps)
+Fix vite.config.js: Add @vitejs/plugin-react import and plugin. This is already installed but not configured.
+Extract LandingPage component: Copy the LandingPage function from landing-page/src/routes/index.tsx into a new components/LandingPage.jsx. Remove the createFileRoute wrapper and TanStack-specific exports. The component is self-contained (only depends on lucide-react icons and the Button component).
+Extract and simplify Button component: Copy landing-page/src/components/ui/button.tsx to components/ui/Button.jsx. Add class-variance-authority and @radix-ui/react-slot to root package.json. Alternatively, inline a simpler button that matches the same visual variants.
+Convert landing-page CSS to Tailwind v3 compatible format: The landing page styles in landing-page/src/styles.css (357 lines) use @apply and CSS custom properties. These need to be converted:
+Keep all :root custom property declarations as-is (they are plain CSS).
+Convert @layer base / @layer components blocks to standard CSS or Tailwind v3 @layer syntax.
+Save as landing-page-styles.css and import it in styles.css (replacing the current cross-boundary import).
+Update styles.css: Replace @import "./landing-page/src/styles.css" with @import "./landing-page-styles.css".
+Update the import in pycademy-python-learning-platform.jsx: Change line 12 from import { LandingPage as PublicLandingPage } from "./landing-page/src/routes/index.tsx" to import { LandingPage as PublicLandingPage } from "./components/LandingPage.jsx".
+Fix hero CTA buttons: In the extracted LandingPage.jsx, wire the hero section's "Create your free account" and "Log In" buttons (currently static, lines 356-361 of index.tsx) to call onSignup and onLogin respectively, matching the nav-bar pattern.
+Git/Submodule Cleanup
+The landing-page directory is tracked as mode 160000 (submodule commit) but has no .gitmodules file. Two options:
+Option A (recommended): Create a proper .gitmodules file registering the submodule URL https://github.com/roguemedia101/practice-pulse-academy.git at path landing-page. This allows Lovable sync to continue independently.
+Option B: Remove the submodule entry from the git index and add landing-page/ to .gitignore. Keep it as a local-only reference copy.
+Either way, the root app should never import from landing-page/ at build time after migration.
+8. Validation Strategy
+Pre-migration snapshot: git stash or branch before changes.
+After step 1: npm run dev should start without errors (currently may error on missing plugin).
+After steps 2-6: npm run dev should render the landing page with full styling. Visually compare against the current landing page in the Lovable preview.
+After step 7: Click "Create Account" and "Log In" in the hero section; verify they transition to the AuthScreen.
+Production build: npm run build should produce a populated dist/ directory. npm run preview should serve a working site at /PyCademy/.
+CI verification: Push to a test branch; confirm the GitHub Actions workflow succeeds and deploys.
+9. Risks and Assumptions
+Item	Detail
+Assumption	The landing page is used only as a visual splash; its TanStack Router/SSR/Nitro capabilities are not needed in production. Evidence: only the LandingPage function is imported, never the router or server.
+Assumption	The Lovable-synced landing-page repo should be preserved for future editing in Lovable's editor, but should not be a build dependency.
+Risk	The @apply directives in landing-page CSS are processed by Tailwind v4 at authoring time. Some v4-only @apply targets may not exist in v3's utility set. Manual review of all 357 lines of landing-page/src/styles.css is required during CSS conversion.
+Risk	The root app pins dependencies to latest, meaning versions can shift unpredictably between installs. Pinning to exact versions after migration is strongly recommended.
+Risk	The 9,696-line monolith JSX will continue to be fragile. This audit does not address splitting it, but it is a significant maintenance concern.
+10. Key File Paths Reference
+File	Role
+c:\Users\joshu\.vscode\Python Learning Claude\package.json	Root app dependencies
+c:\Users\joshu\.vscode\Python Learning Claude\vite.config.js	Root Vite config (missing React plugin)
+c:\Users\joshu\.vscode\Python Learning Claude\styles.css	Root CSS entry (problematic cross-import on line 1)
+c:\Users\joshu\.vscode\Python Learning Claude\tailwind.config.js	Root Tailwind v3 config (scans landing-page files)
+c:\Users\joshu\.vscode\Python Learning Claude\main.jsx	Root app entrypoint
+c:\Users\joshu\.vscode\Python Learning Claude\pycademy-python-learning-platform.jsx	9696-line main app (cross-boundary import on line 12)
+c:\Users\joshu\.vscode\Python Learning Claude\landing-page\package.json	Landing page deps (Tailwind v4, TanStack, Lovable)
+c:\Users\joshu\.vscode\Python Learning Claude\landing-page\vite.config.ts	Landing page Vite config (Lovable wrapper)
+c:\Users\joshu\.vscode\Python Learning Claude\landing-page\src\styles.css	Landing page CSS (357 lines, Tailwind v4 format)
+c:\Users\joshu\.vscode\Python Learning Claude\landing-page\src\routes\index.tsx	LandingPage component source (543 lines)
+c:\Users\joshu\.vscode\Python Learning Claude\landing-page\src\components\ui\button.tsx	Button component with hero/technical variants
+c:\Users\joshu\.vscode\Python Learning Claude\.github\workflows\deploy.yml	GitHub Pages deploy (builds root only)
+
+
+# PyCademy Integration Repair
+
+## Problem Summary
+
+There are 5 root causes behind the broken styling and navigation:
+
+1. **Tailwind version collision**: Root app uses Tailwind v3 (PostCSS), landing page uses Tailwind v4 (Vite plugin). The root `styles.css` imports landing page CSS directly, causing broken style processing.
+2. **Cross-boundary import**: The main JSX file imports a TanStack Router route component from inside `landing-page/`, which depends on libraries not installed in the root app.
+3. **Missing Vite React plugin**: `vite.config.js` only sets `base` but never activates `@vitejs/plugin-react` (which is installed but unused).
+4. **Hero buttons not wired**: The landing page hero "Create Account" and "Log In" buttons call `scrollTo()` instead of the `onSignup`/`onLogin` callbacks, so clicking them navigates nowhere.
+5. **Git submodule corruption**: `landing-page/` is tracked as a git submodule (mode 160000) but has no `.gitmodules` file, making git unable to manage it.
+
+## Strategy
+
+Extract the `LandingPage` component and its CSS out of the `landing-page/` folder into the root app as standalone files. This eliminates the cross-boundary import and the Tailwind version conflict. The existing styling of both the landing page and the main app will be preserved exactly as-is -- no visual changes.
+
+After extraction, the `landing-page/` folder will be fully merged into the repo (de-submoduled) and can be kept as a dormant reference or removed.
+
+---
+
+## Step 1: Fix `vite.config.js`
+
+**File**: `vite.config.js`
+
+Add the React plugin that is already installed but not configured:
+
+```js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  base: '/PyCademy/',
+})
+```
+
+---
+
+## Step 2: Extract the LandingPage component
+
+**Source**: `landing-page/src/routes/index.tsx` (the `LandingPage` function export)
+
+**Target**: `components/LandingPage.jsx`
+
+- Copy the `LandingPage` function component and all its internal helper components/constants.
+- Remove the `createFileRoute` wrapper and TanStack-specific exports (only the visual component is needed).
+- Convert TypeScript syntax to JSX (remove type annotations).
+- Keep all class names, structure, and logic identical.
+
+---
+
+## Step 3: Extract the Button component
+
+**Source**: `landing-page/src/components/ui/button.tsx`
+
+**Target**: `components/ui/Button.jsx`
+
+- Copy the shadcn Button with its variants.
+- Add `class-variance-authority` and `@radix-ui/react-slot` to root `package.json` dependencies.
+- Convert TypeScript to JSX.
+
+---
+
+## Step 4: Convert landing page CSS to Tailwind v3 compatible format
+
+**Source**: `landing-page/src/styles.css` (357 lines)
+
+**Target**: `landing-page-styles.css`
+
+- The landing page CSS is mostly CSS custom properties (`:root` blocks) and `@layer` declarations with `@apply`.
+- Convert v4-only syntax to v3-compatible CSS:
+  - Keep all `:root` custom property declarations as plain CSS (they work in both versions).
+  - Convert oklch color values to hsl equivalents (Tailwind v3 does not understand oklch).
+  - Ensure `@layer` blocks use v3-compatible syntax.
+- This preserves the exact same visual appearance; only the CSS syntax dialect changes.
+
+---
+
+## Step 5: Update `styles.css` import
+
+**File**: `styles.css`
+
+Replace line 1:
+```css
+/* FROM */ @import "./landing-page/src/styles.css";
+/* TO   */ @import "./landing-page-styles.css";
+```
+
+---
+
+## Step 6: Update the import in the main app
+
+**File**: `pycademy-python-learning-platform.jsx`
+
+Change line 12:
+```js
+// FROM
+import { LandingPage as PublicLandingPage } from "./landing-page/src/routes/index.tsx";
+// TO
+import { LandingPage as PublicLandingPage } from "./components/LandingPage.jsx";
+```
+
+---
+
+## Step 7: Fix hero CTA buttons
+
+In the extracted `components/LandingPage.jsx`, wire the hero section's "Create your free account" button to call `onSignup` and the "Log In" link to call `onLogin`, matching what the nav-bar buttons already do. This ensures clicking either button in the hero section transitions to the AuthScreen.
+
+---
+
+## Step 8: Match the landing page logo to the main project logo
+
+Both apps have similar logos but they are not identical. In the extracted `components/LandingPage.jsx`, replace the landing page's logo rendering (icon, text, font, colors, sizing) with the exact logo JSX/SVG from the main project's `pycademy-python-learning-platform.jsx`. This makes the branding pixel-identical across the landing page and the main app (nav bar, footer, and any other logo occurrences).
+
+---
+
+## Step 9: Fix Git submodule corruption
+
+- Remove the submodule entry from the git index (`git rm --cached landing-page`).
+- Remove the `.git` directory inside `landing-page/` so it becomes a regular folder.
+- Re-add `landing-page/` as normal tracked files in the main repo (completing the "merge completely" choice).
+- The folder remains as a reference of the original Lovable source.
+
+---
+
+## Step 10: Install missing dependencies
+
+Add to root `package.json`:
+- `class-variance-authority` (needed by the extracted Button component)
+- `@radix-ui/react-slot` (needed by Button's `asChild` prop)
+- `clsx` and `tailwind-merge` (needed by the `cn()` utility used in components)
+
+Run `npm install`.
+
+---
+
+## Step 11: Verify build and deployment
+
+- Run `npm run dev` and visually confirm both the landing page and main app render with correct styling.
+- Click "Create Account" and "Log In" buttons in both the hero and nav bar -- confirm they transition to the AuthScreen.
+- Verify the logo on the landing page matches the main app's logo exactly.
+- Run `npm run build` and confirm `dist/` is populated.
+- Confirm the GitHub Actions deploy workflow (`deploy.yml`) will work with the current setup.
+
+---
+
+## What Will NOT Change
+
+- **No visual styling changes** -- every pixel of the landing page and main app will look identical (except the logo which will now match).
+- **No changes to `pycademy-python-learning-platform.jsx`** beyond the single import path on line 12.
+- **No splitting of the large JSX file** -- that can be done later when you are ready.
+- **No changes to the main app's component logic, state management, or view routing.**
+
+## Risks
+
+| Risk | Mitigation |
+|---|---|
+| oklch-to-hsl color conversion might have minor rounding differences | Will use precise conversion tools; differences would be sub-pixel and imperceptible |
+| Some Tailwind v4 utilities in CSS may not exist in v3 | Will manually review all 357 lines and use equivalent v3 utilities or raw CSS |
+| The `landing-page/` folder becoming regular tracked files increases repo size | Acceptable trade-off for simplicity; the folder is not large |
+
+
+Task 2: Extract components, fix vite config, wire navigation, match logo
+Task 2 Complete
+Step 1 — vite.config.js: Added the @vitejs/plugin-react plugin with base: '/PyCademy/' preserved, exactly as specified.Step 2 — components/LandingPage.jsx (new, 520 lines): Extracted from landing-page/src/routes/index.tsx. Removed the createFileRoute wrapper/route metadata and all TypeScript syntax (type aliases, annotations, generics, as assertions). All class names, JSX structure, and logic are byte-identical to the source — verified via a full diff showing only the intended changes.Step 3 — components/ui/Button.jsx + components/lib/utils.js (new): Full shadcn Button with all variants (default, hero, technical, destructive, outline, secondary, ghost, link) and sizes, converted to plain JSX. cn() utility created with clsx + tailwind-merge.Step 4 — Import updated in pycademy-python-learning-platform.jsx line 12 → ./components/LandingPage.jsx. Git confirms exactly 1 line changed.Step 5 — Hero CTAs wired: "Create your free account" → onClick={onSignup ?? (() => scrollTo("final"))}, "Log In" → onClick={onLogin ?? (() => scrollTo("final"))}, matching the nav-bar pattern.Step 6 — Logo matched: The Brand component (used by both navbar and footer) now uses the main app's exact logo JSX — Terminal icon in a w-8 h-8 rounded-lg bg-cyan-950 border border-cyan-800 box with text-cyan-400, plus font-semibold tracking-tight wordmark and gap-2 spacing, pixel-identical to the app sidebar logo.
+⚠️ Important incident during Step 4
+The edit tool corrupted the main app file twice — it converted \n escape sequences inside two long string literals (Selenium lesson example, Flask reference entry) into real newlines, breaking JS syntax. I repaired this by restoring the pristine file from git HEAD and re-applying the import change with a deterministic PowerShell replacement, then verified: git diff shows only the 1 intended line changed, both string literals intact, line count restored (9695), and all files pass a babel JSX parse. A backup stash corrupted-state-backup-task2 holds the corrupted state (safe to drop).
+Notes for the other agents
+Tailwind: tailwind.config.js content globs don't include ./components/** — the extracted landing page classes (e.g. hero-grid, bg-background) will purge without it.
+npm install: root package.json still needs clsx, tailwind-merge, class-variance-authority, and @radix-ui/react-slot (imported as instructed; root node_modules is currently only partially installed).
+
+
+Task 3 complete. Summary of what was done:Created landing-page-styles.css — a Tailwind v3–compatible conversion of landing-page/src/styles.css:
+All 59 oklch() values (27 distinct colors) converted to precise hsl() equivalents using CSS Color 4 math (OKLCH → OKLab → linear sRGB → gamma → HSL), including spec-compliant gamut mapping (chroma reduction, JND 0.02) for the 3 colors outside sRGB gamut (primary cyan, AI purple, workspace shadow).
+Preserved byte-for-byte: :root property declarations, @layer base / @layer components blocks, all @apply directives, keyframes, media queries, and the color-mix() usage (plain CSS, necessary for the dynamic currentColor tint — not convertible statically).
+No @theme/@source v4 features were present; no @tailwind directives added. Alpha values kept verbatim.
+Values use full hsl(...) functions (e.g. --primary: hsl(187.5 100% 44.87%)) because tailwind.config.js consumes var(--x) directly — bare components would produce invalid CSS.
+Updated styles.css — line 1 now @import "./landing-page-styles.css";, everything else unchanged.Verification performed:
+Strict automated diff: target is an exact character match of the source with only oklch→hsl substituted (PASS); 0 oklch / 59 hsl tokens in target.
+Compiled through the real Tailwind v3.4.19 pipeline (same postcss-import + tailwindcss + autoprefixer processors): build succeeded, proving every @apply utility (size-*, min-h-64/14/80/96, custom colors, sm:`/hover:variants) exists in v3 + config; output contains all component classes with resolved properties and no leftover directives.
+landing-page/ was not modified; no JS/JSX files modified; temp files removed.
+One note (not caused by this change): the full vite build currently fails on a pre-existing unterminated string in pycademy-python-learning-platform.jsx line 1208 (a multi-line single-quoted string) from other in-progress work — the JSX is explicitly out of scope here. CSS compilation itself was verified independently and is clean.
+
+
+Task 4 summary — no changes were needed; the corrupted submodule state does not exist.Finding: The landing-page/ directory is already a regular tracked directory in the repository. The fix was evidently already applied (HEAD is commit 0030138 "Backup before fixing 2", with 0712abc "Backup before fixing" just before it; both are pushed to origin/main). Executing the prescribed steps would have been pointless at best and destructive at worst, so I deliberately did not run them and made zero modifications (all commands were read-only checks).Verification evidence:
+git status — clean working tree, branch main up to date with origin/main
+git ls-files -s landing-page — all entries are mode 100644 regular files (no 160000 gitlink)
+Full index scan for 160000 — zero submodule entries anywhere
+git ls-tree HEAD landing-page — 040000 tree (committed as a regular directory, not a submodule commit)
+git submodule status — exits with code 0 and no output; it does not fail
+.gitmodules absent, landing-page/.git absent, .git/modules absent, no submodule.* entries in .git/config
+70 files tracked under landing-page/
+git add --dry-run landing-page/ — no-op; git diff HEAD -- landing-page — empty (HEAD, index, and working tree are fully in sync)
+Why I skipped the steps: git rm --cached landing-page would have staged deletion of all 70 files; re-adding with git add landing-page/ can permanently drop any file that .gitignore would then exclude (once untracked), risking new index corruption — the opposite of the goal. There is also no landing-page/.git to delete.Outcome: Nothing to commit, nothing staged, no source files touched. The index already satisfies the task's verification criterion — landing-page files appear as regular tracked files, not a submodule. The repository is clean and ready for task #6 (build/styling/navigation verification).
+
+Task 5: Install missing dependencies for extracted components
+
+Task 6: Verify build, styling, and navigation work correctly
